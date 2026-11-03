@@ -1,0 +1,1519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Circuit Lab: Practicals 4 to 8</title>
+<style>
+:root{
+  --paper:#EDF3F1; --ink:#172B3A; --ink2:#42596A; --teal:#0E7C86; --amber:#F0A202; --rose:#D1495B;
+  --bench:#172B3A; --bench2:#21394B; --wire:#7FB7BE; --line:#C9DAD6; --light:#DCEBEA;
+  --font: ui-rounded,"Avenir Next Rounded","Nunito","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);color:var(--ink);font-size:17px;line-height:1.55;
+  background-color:var(--paper);
+  background-image:linear-gradient(rgba(14,124,134,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(14,124,134,.07) 1px,transparent 1px);
+  background-size:24px 24px;padding-bottom:90px}
+.skip{position:absolute;left:-999px}
+.skip:focus{left:8px;top:8px;background:#fff;padding:8px;z-index:50}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;padding:16px 18px 10px;max-width:1180px;margin:0 auto}
+.brand h1{margin:0;font-size:1.7rem;line-height:1;letter-spacing:-.02em;font-weight:800}
+.brand p{margin:4px 0 0;color:var(--ink2);font-size:.92rem}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sw{display:flex;gap:8px;align-items:center;font-size:.9rem;font-weight:600;min-height:44px}
+.sw input{width:22px;height:22px;accent-color:var(--teal)}
+
+/* layout */
+.shell{max-width:1180px;margin:0 auto;padding:0 16px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:4px;background:var(--ink);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabs button{flex:1;min-width:0;min-height:54px;border:0;border-radius:12px;background:transparent;color:#B9CFD6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:600;font-size:.66rem;line-height:1.15;padding:2px;cursor:pointer}
+.tabs button b{font-size:1.2rem;color:#fff;line-height:1}
+.tabs button[aria-current=page]{background:var(--teal);color:#fff}
+@media(min-width:900px){
+  body{padding-bottom:40px}
+  .shell{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start}
+  .tabs{position:sticky;top:16px;flex-direction:column;border-radius:20px;padding:10px;gap:6px}
+  .tabs button{flex-direction:row;justify-content:flex-start;gap:12px;font-size:.98rem;padding:10px 12px;text-align:left}
+  .tabs button b{font-size:1.4rem;width:1.6em;text-align:center}
+}
+main{min-width:0}
+
+/* experiment content */
+.exp-title{font-size:clamp(1.55rem,5vw,2.2rem);line-height:1.15;margin:6px 0 16px;display:flex;gap:12px;align-items:center;letter-spacing:-.01em}
+.num{flex:none;width:2.3em;height:2.3em;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:.8em}
+.sec{margin:28px 0}
+.sec h3{font-size:1.28rem;margin:0 0 10px;letter-spacing:-.01em}
+.sec p{margin:8px 0;max-width:68ch}
+.aim{background:#fff;border-left:6px solid var(--teal);border-radius:4px 16px 16px 4px;padding:14px 16px;font-size:1.06rem;font-weight:600}
+.aim p{margin:4px 0}
+.kid{background:#FFF6D6;border-left:6px solid var(--amber);border-radius:4px 18px 18px 4px;padding:14px 18px}
+.kid h4{margin:0 0 6px;font-size:1.08rem}
+.kid p,.kid ol,.kid ul{max-width:62ch}
+.formula{background:#fff;border:2px dashed var(--teal);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:.93rem;line-height:1.85;overflow-x:auto;white-space:pre-wrap;margin:12px 0}
+ul.tight,ol.steps{padding-left:1.3em;margin:8px 0}
+ol.steps li,ul.tight li{margin:7px 0;max-width:68ch}
+.two-col{display:grid;gap:14px}
+@media(min-width:760px){.two-col{grid-template-columns:1fr 1fr}}
+.pane{background:#fff;border-radius:14px;padding:12px 16px}
+.pane h4{margin:0 0 4px}
+details.q{background:#fff;border-radius:12px;margin:8px 0}
+details.q summary{padding:12px 14px;font-weight:700;cursor:pointer;min-height:44px;list-style-position:inside}
+details.q p{margin:0;padding:0 14px 14px}
+table{border-collapse:collapse;width:100%;background:#fff;border-radius:12px;overflow:hidden;font-size:.93rem}
+th,td{padding:9px 10px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:#DDEBE8;font-weight:700;white-space:normal;line-height:1.25}
+td{font-family:var(--mono)}
+td.empty{font-family:var(--font);color:var(--ink2);white-space:normal;padding:16px}
+tr.now td{background:#FFF0B8;font-weight:700}
+.tw{overflow-x:auto;border-radius:12px}
+.result{background:#fff;border-left:6px solid var(--teal);border-radius:4px 14px 14px 4px;padding:12px 16px;font-weight:600;min-height:56px}
+
+/* bench */
+.bench{background:var(--bench);color:var(--light);border-radius:20px;padding:14px;margin:12px 0}
+.bench h4{margin:0 0 8px;color:#fff}
+.bench-grid{display:grid;gap:14px}
+@media(min-width:760px){.bench-grid.two{grid-template-columns:1.25fr 1fr}}
+svg.circuit{width:100%;height:auto;display:block;background:var(--bench2);border-radius:14px}
+svg text{font-family:var(--font)}
+.t{fill:var(--light);font-size:11.5px;font-weight:600}
+.tb{fill:#fff;font-size:15px;font-weight:800}
+.ts{fill:#9FC0C9;font-size:10px;font-weight:600}
+.c{stroke:var(--light);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.c.amber{stroke:var(--amber)}
+.mask{fill:var(--bench2)}
+.w{stroke:var(--wire);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.live .w{stroke:var(--amber);stroke-dasharray:7 9;animation:flow .8s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+@media(prefers-reduced-motion:reduce){.live .w{animation:none;stroke-dasharray:none}}
+.dot{fill:var(--wire)}
+.key{cursor:pointer}
+.lever{stroke:var(--light);stroke-width:3.2;stroke-linecap:round}
+.key.closed .lever{stroke:var(--amber)}
+.dashbox{fill:none;stroke:#5B8798;stroke-width:1.5;stroke-dasharray:5 5}
+.glow{fill:#4a3a1d;stroke:var(--light);stroke-width:2.5}
+.glow.on{fill:var(--amber);filter:drop-shadow(0 0 7px var(--amber))}
+.inbox{cursor:pointer}
+.inbox rect{fill:#0f1d29;stroke:var(--wire);stroke-width:2}
+.inbox.hi rect{fill:#5a4306;stroke:var(--amber)}
+.inbox text{fill:#fff;font:700 14px var(--mono)}
+.dial{width:100%;height:auto;display:block}
+.ros{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:10px 0}
+.ro{background:#0f1d29;border-radius:12px;padding:8px 12px}
+.ro b{display:block;font:700 1.35rem var(--mono);color:#FFD166}
+.ro small{display:block;color:#9FB8C4;font-size:.78rem;line-height:1.25}
+.msg{background:#0f1d29;border-left:4px solid var(--wire);border-radius:8px;padding:9px 12px;font-size:.92rem;margin-top:8px}
+.msg.bad{background:#3b2430;border-color:var(--rose);color:#FFD5DB}
+.msg.good{background:#123a3a;border-color:#3DC1A7;color:#CFF5EA}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.btn{min-height:44px;padding:0 16px;border:0;border-radius:12px;background:var(--amber);color:var(--ink);font-weight:800;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:#2C4A5E;color:#fff}
+.btn.line{background:#fff;border:2px solid var(--teal);color:var(--teal)}
+.btn.tiny{min-height:38px;padding:0 10px;font-size:.88rem;background:#2C4A5E;color:#fff;font-weight:700}
+.btn.key{background:#2C4A5E;color:#fff}
+.btn.key[aria-pressed="true"]{background:var(--teal);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.ctl{margin:12px 0}
+.ctl-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:2px}
+.ctl label{font-weight:700}
+.ctl-num{display:flex;gap:6px;align-items:center}
+.ctl input[type=number],.num-in{width:104px;min-height:40px;border-radius:10px;border:1px solid #3A5568;background:#0f1d29;color:#fff;padding:4px 8px;font-family:var(--mono);font-size:1rem;text-align:right}
+.ctl input[type=range]{width:100%;height:34px;accent-color:var(--amber)}
+.fine{display:flex;gap:6px;flex-wrap:wrap}
+.unit{color:#9FB8C4;min-width:1.6em}
+.field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}
+.field label{display:block;font-size:.88rem;font-weight:700;margin-bottom:3px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{min-height:44px;padding:0 14px;border-radius:22px;border:2px solid #3A5568;background:transparent;color:var(--light);font-weight:700;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#fff}
+.seg{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.seg button{flex:1;min-width:140px;min-height:48px;border-radius:14px;border:2px solid var(--teal);background:#fff;color:var(--teal);font-weight:800;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--teal);color:#fff}
+.graph{width:100%;height:auto;background:#fff;border-radius:14px;display:block}
+.graph text{fill:var(--ink);font-size:10.5px}
+.bar{height:14px;border-radius:7px;background:#0f1d29;overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(20px);bottom:86px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:14px;max-width:min(92vw,520px);font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:60;border-left:6px solid var(--amber)}
+#toast.show{opacity:1;transform:translateX(-50%)}
+#toast.bad{border-color:var(--rose)}
+#toast.good{border-color:#3DC1A7}
+@media(min-width:900px){#toast{bottom:24px}}
+.credit{margin:6px 0 0;font-size:.88rem;font-weight:600;line-height:1.4;color:var(--ink);user-select:none;-webkit-user-select:none;cursor:default}
+.devby{margin:6px 0 0;padding:14px 16px 0;text-align:center;font-size:.76rem;color:var(--ink2);user-select:none;-webkit-user-select:none}
+.devby-print{display:none}
+@media print{
+  @page{margin:14mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tabs,.top-actions,.skip,#toast,.seg,.devby{display:none!important}
+  body{background:#fff;padding:0;font-size:12pt}
+  .shell{display:block;padding:0}
+  .top{padding:0 0 8px;border-bottom:1px solid var(--line)}
+  .exp .sec:not(.aimsec):not(.simsec){display:none!important}
+  .simsec>h3,.simsec>p,.bench{display:none!important}
+  table,.graph,.result{break-inside:avoid}
+  .tw{overflow:visible}
+  th,td{white-space:normal}
+  .devby-print{display:block;margin-top:18px;padding-top:6px;border-top:1px solid var(--line);font-size:9pt;color:var(--ink2);text-align:center}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the experiment</a>
+
+<header class="top">
+  <div class="brand">
+    <h1>Circuit Lab</h1>
+    <div class="credit" contenteditable="false" aria-readonly="true"><div>Instructor: Ms. Naveera Nazneen</div><div>Software: Circuit Lab</div></div>
+    <p>Practicals 4 to 8 with live circuits. Works on phone and laptop, even offline.</p>
+  </div>
+  <div class="top-actions">
+    <label class="sw"><input type="checkbox" id="noise"><span>Real meter error</span></label>
+    <button class="btn line" id="print" type="button">Print</button>
+  </div>
+</header>
+
+<div class="shell">
+<nav class="tabs" id="tabs" aria-label="Experiments">
+  <button type="button" data-exp="exp4"><b>4</b><span>Half deflection</span></button>
+  <button type="button" data-exp="exp5"><b>5</b><span>Ohm's law</span></button>
+  <button type="button" data-exp="exp6"><b>6</b><span>To voltmeter</span></button>
+  <button type="button" data-exp="exp7"><b>7</b><span>To ammeter</span></button>
+  <button type="button" data-exp="exp8"><b>8</b><span>Circuits and gates</span></button>
+</nav>
+
+<main id="main">
+
+<!-- ============ EXPERIMENT 4 ============ -->
+<article id="exp4" class="exp" hidden>
+  <h2 class="exp-title"><span class="num">4</span>Find the resistance of a galvanometer</h2>
+
+  <section class="sec"><h3>Aim</h3>
+    <div class="aim"><p>To find the internal resistance (G) of a galvanometer by the half deflection method, and its figure of merit (k).</p></div>
+  </section>
+
+  <section class="sec"><h3>What you need</h3>
+    <p>A galvanometer, a 2 V cell with very small internal resistance, a high resistance box R (0 to 50 000 Ω), a low resistance box S (0 to 300 Ω), two one-way keys K1 and K2, connecting wires and sandpaper.</p>
+  </section>
+
+  <section class="sec"><h3>Theory</h3>
+    <div class="kid">
+      <h4>In simple words</h4>
+      <p>A galvanometer is a tiny current detector. When current flows, its needle swings. Inside is a coil of thin wire, and every wire pushes back a little against current. That push-back is called resistance. For the coil we call it <b>G</b>.</p>
+      <p>Imagine current as cars on a road. The galvanometer is a narrow gate. How narrow is the gate? Here is the trick:</p>
+      <ol class="steps">
+        <li>Let the cars through the gate. The needle swings, say 30 divisions.</li>
+        <li>Build a second gate <b>S</b> right next to it. Cars can use either gate.</li>
+        <li>Change S until the needle drops to exactly half, 15 divisions. Half the cars now use the new gate.</li>
+        <li>Cars split into equal halves only when both gates are equally easy. So <b>S is the same size as G</b>.</li>
+      </ol>
+      <p>Why only "almost"? The big resistor R works like a traffic controller. It keeps the total traffic nearly the same when we open the second gate. The bigger R is, the closer S gets to G. The exact formula is below.</p>
+    </div>
+    <div class="formula">Only K1 closed:   Ig  = E / (R + G)              (deflection θ)
+K1 and K2 closed: Ig' = E·S / [R(G + S) + G·S]  (deflection θ/2)
+Put Ig' = Ig / 2  →   G = R·S / (R − S)
+If R is much bigger than S:  G ≈ S
+Figure of merit:  k = E / [(R + G)·θ]   (current for 1 division)
+Biggest safe current:  Ig(max) = n·k   (n = divisions on each side)</div>
+  </section>
+
+  <section class="sec"><h3>Circuit diagram and simulator</h3>
+    <p>Tap the keys in the circuit or use the buttons. The galvanometer in this simulator has a hidden resistance. Find it, then check yourself.</p>
+    <div id="sim4"></div>
+  </section>
+
+  <section class="sec"><h3>Procedure</h3>
+    <div class="two-col">
+      <div class="pane"><h4>In the real lab</h4>
+        <ol class="steps">
+          <li>Draw the circuit and connect it. Make sure all plugs of the resistance boxes are tight.</li>
+          <li>Take out a high resistance from R, close only K1 and adjust R until the deflection θ is large, an even number and inside the scale (say 30).</li>
+          <li>Note R and θ.</li>
+          <li>Close K2. Without changing R, adjust S until the deflection is exactly θ/2. Note S.</li>
+          <li>Remove the K2 plug. Repeat steps 2 to 4 for five different values of R.</li>
+          <li>Calculate G = RS/(R − S) for each set and take the mean.</li>
+        </ol></div>
+      <div class="pane"><h4>In this simulator</h4>
+        <ol class="steps">
+          <li>Close K1. Tap "Set R for 30 divisions".</li>
+          <li>Read θ (the box "θ with K2 open").</li>
+          <li>Close K2. Change S until the needle reads θ/2. Use the small ± buttons for fine tuning.</li>
+          <li>Tap "Record reading".</li>
+          <li>Change R a little (for example 24 000, 25 000, 26 000 Ω), open K2, and repeat. Take 5 readings.</li>
+        </ol></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>Precautions</h3>
+    <ul class="tight">
+      <li>Plugs of the resistance boxes must be tight and clean.</li>
+      <li>The cell must have very small internal resistance (a fresh cell or a battery eliminator).</li>
+      <li>Always keep a high resistance in R before closing K1. A small R can burn the galvanometer.</li>
+      <li>Take the deflection as an even number so that half of it is easy to read.</li>
+      <li>Read the pointer straight on, to avoid parallax error.</li>
+    </ul>
+  </section>
+
+  <section class="sec"><h3>Viva questions</h3>
+    <details class="q"><summary>Why do we use a very high resistance R?</summary><p>It keeps the total current almost the same when S is connected, and it protects the galvanometer. It also makes G almost equal to S.</p></details>
+    <details class="q"><summary>Can we use one third deflection instead of half?</summary><p>Yes. Then G = 2RS/(R − 2S), which is about 2S when R is large.</p></details>
+    <details class="q"><summary>Why must the cell have almost zero internal resistance?</summary><p>The formula assumes the total resistance of the circuit is only R plus the galvanometer. A large internal resistance would change that and give an error in G.</p></details>
+    <details class="q"><summary>What is the figure of merit?</summary><p>It is the current needed to move the needle by one division. A smaller figure of merit means a more sensitive galvanometer.</p></details>
+  </section>
+</article>
+
+<!-- ============ EXPERIMENT 5 ============ -->
+<article id="exp5" class="exp" hidden>
+  <h2 class="exp-title"><span class="num">5</span>Verify Ohm's law</h2>
+
+  <section class="sec"><h3>Aim</h3>
+    <div class="aim"><p>To verify Ohm's law (V = IR) by measuring the voltage, current and resistance in a circuit, using different resistors and different voltages.</p></div>
+  </section>
+
+  <section class="sec"><h3>What you need</h3>
+    <p>A variable DC source (battery eliminator, 0 to 12 V), a few resistors, an ammeter, a voltmeter, a one-way key, connecting wires, sandpaper and graph paper.</p>
+  </section>
+
+  <section class="sec"><h3>Theory</h3>
+    <div class="kid">
+      <h4>In simple words</h4>
+      <p>Think of a water pipe. <b>Voltage (V)</b> is the push of the water pump. <b>Current (I)</b> is how much water flows each second. <b>Resistance (R)</b> is how narrow or rough the pipe is.</p>
+      <ul class="tight">
+        <li>Push twice as hard and twice as much water flows.</li>
+        <li>Use a narrower pipe and less water flows.</li>
+      </ul>
+      <p>That is Ohm's law: <b>V = I × R</b>. If you draw a graph of V against I for a resistor you get a straight line starting at zero. The steepness (slope) of the line is the resistance.</p>
+      <p>Careful: a light bulb gets hot and its resistance changes, so its graph bends. Try the bulb in the simulator.</p>
+    </div>
+    <div class="formula">V = I × R        R = V / I
+Graph of V (up) against I (across): straight line through zero
+Slope of the line = R
+Ammeter goes in SERIES. Voltmeter goes in PARALLEL.</div>
+  </section>
+
+  <section class="sec"><h3>Circuit diagram and simulator</h3>
+    <div id="sim5"></div>
+  </section>
+
+  <section class="sec"><h3>Procedure</h3>
+    <div class="two-col">
+      <div class="pane"><h4>In the real lab</h4>
+        <ol class="steps">
+          <li>Check the zero error of the ammeter and voltmeter.</li>
+          <li>Connect the source, key, ammeter and resistor in series. Connect the voltmeter across the resistor.</li>
+          <li>Close the key. Set the voltage to a small value. Note V and I.</li>
+          <li>Increase the voltage step by step and note 6 readings.</li>
+          <li>Plot a graph of V against I and find the slope.</li>
+          <li>Repeat for other resistors. Try a bulb as well.</li>
+        </ol></div>
+      <div class="pane"><h4>In this simulator</h4>
+        <ol class="steps">
+          <li>Close the key. Pick a resistor.</li>
+          <li>Move the voltage slider and tap "Add reading". Do this 6 times.</li>
+          <li>Look at the graph and the V/I column. Is V/I constant?</li>
+          <li>Try the mystery resistor: use the slope to find its value, then reveal it.</li>
+          <li>Switch to the bulb and see what changes.</li>
+        </ol></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>Precautions</h3>
+    <ul class="tight">
+      <li>Connect the ammeter in series and the voltmeter in parallel. Connect + to + and − to −.</li>
+      <li>Switch off the key between readings. A hot resistor changes its resistance.</li>
+      <li>Do not exceed the current rating of the resistor.</li>
+      <li>Use ammeter and voltmeter ranges that give a deflection of more than half the scale.</li>
+    </ul>
+  </section>
+
+  <section class="sec"><h3>Viva questions</h3>
+    <details class="q"><summary>Why is the V–I graph a straight line?</summary><p>Because V/I stays constant for an ohmic resistor, so V is directly proportional to I.</p></details>
+    <details class="q"><summary>Why should an ammeter have very low resistance and a voltmeter very high resistance?</summary><p>The ammeter must not reduce the current it measures, and the voltmeter must not take current away from the part of the circuit it is measuring.</p></details>
+    <details class="q"><summary>Name something that does not obey Ohm's law.</summary><p>A bulb filament, a diode or a thermistor. Their resistance changes with temperature or voltage.</p></details>
+    <details class="q"><summary>What happens to a metal wire's resistance when it heats up?</summary><p>It increases, because the atoms vibrate more and block the moving electrons more.</p></details>
+  </section>
+</article>
+
+<!-- ============ EXPERIMENT 6 ============ -->
+<article id="exp6" class="exp" hidden>
+  <h2 class="exp-title"><span class="num">6</span>Turn a galvanometer into a voltmeter</h2>
+
+  <section class="sec"><h3>Aim</h3>
+    <div class="aim"><p>To convert a galvanometer (of known resistance G and figure of merit k) into a voltmeter of a given range, for example 0 to 3 V, and to verify it.</p></div>
+  </section>
+
+  <section class="sec"><h3>What you need</h3>
+    <p>A galvanometer, a high resistance box, a battery, a rheostat (used as a potential divider), a standard voltmeter of the same range, a one-way key, wires and sandpaper.</p>
+  </section>
+
+  <section class="sec"><h3>Theory</h3>
+    <div class="kid">
+      <h4>In simple words</h4>
+      <p>A galvanometer is like a very delicate weighing scale that can only weigh a feather: it handles only a tiny current. A big voltage would push far too much current through it.</p>
+      <p>So we add a long bumpy road in front of it: a large resistor <b>R</b> in series. Now even a big voltage pushes only a tiny, safe current through the galvanometer. We then relabel the scale in volts.</p>
+      <p>A voltmeter is connected across the thing you measure, so it must not steal current. That is why its total resistance must be very high.</p>
+    </div>
+    <div class="formula">Full-scale current:  Ig = n × k
+For range V:  V = Ig × (G + R)
+Series resistance:  R = V / Ig − G
+Reading in volts = θ × (V / n)       (one division = V / n volts)</div>
+  </section>
+
+  <section class="sec"><h3>Circuit diagram and simulator</h3>
+    <p>Start by tapping "Use calculated R". Then slide the voltage and compare the converted reading with the standard voltmeter. Try a wrong R to see the error.</p>
+    <div id="sim6"></div>
+  </section>
+
+  <section class="sec"><h3>Procedure</h3>
+    <div class="two-col">
+      <div class="pane"><h4>In the real lab</h4>
+        <ol class="steps">
+          <li>Find G and k of the galvanometer (Experiment 4). Calculate Ig = n·k.</li>
+          <li>Calculate R = V/Ig − G for the range you want.</li>
+          <li>Connect the resistance box with this R in series with the galvanometer.</li>
+          <li>Connect this combination in parallel with a standard voltmeter, across the potential divider.</li>
+          <li>Slide the rheostat contact and take 6 readings covering the whole range.</li>
+          <li>Convert each deflection into volts and compare with the standard voltmeter.</li>
+        </ol></div>
+      <div class="pane"><h4>In this simulator</h4>
+        <ol class="steps">
+          <li>Enter G, k and the range you want.</li>
+          <li>Read the calculated R. Tap "Use calculated R".</li>
+          <li>Close K1. Move the voltage slider.</li>
+          <li>Tap "Record reading" at 6 different voltages.</li>
+          <li>Check that the error stays very small.</li>
+        </ol></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>Precautions</h3>
+    <ul class="tight">
+      <li>Use a high resistance box. Keep the plugs tight.</li>
+      <li>Use the rheostat as a potential divider and start from zero voltage.</li>
+      <li>Connect the voltmeter in parallel. Check the polarity.</li>
+      <li>For verification use a standard voltmeter with the same range.</li>
+    </ul>
+  </section>
+
+  <section class="sec"><h3>Viva questions</h3>
+    <details class="q"><summary>Why is the resistance connected in series?</summary><p>A series resistance takes most of the voltage, so only a small safe current flows through the galvanometer, and the total resistance becomes very high.</p></details>
+    <details class="q"><summary>What is the resistance of an ideal voltmeter?</summary><p>Infinite. A real one is just very high.</p></details>
+    <details class="q"><summary>If we increase R, what happens to the range?</summary><p>The range increases (it can measure bigger voltages), but each division stands for more volts, so it is less sensitive.</p></details>
+    <details class="q"><summary>Why must a voltmeter be connected in parallel?</summary><p>Voltage is measured between two points, so the meter must connect to both points without breaking the circuit.</p></details>
+  </section>
+</article>
+
+<!-- ============ EXPERIMENT 7 ============ -->
+<article id="exp7" class="exp" hidden>
+  <h2 class="exp-title"><span class="num">7</span>Turn a galvanometer into an ammeter</h2>
+
+  <section class="sec"><h3>Aim</h3>
+    <div class="aim"><p>To convert a galvanometer (of known resistance G and figure of merit k) into an ammeter of a given range, for example 0 to 30 mA, and to verify it.</p></div>
+  </section>
+
+  <section class="sec"><h3>What you need</h3>
+    <p>A galvanometer, a shunt (a resistance box or a piece of wire of the right length), a battery, a rheostat, a standard ammeter of the same range, a one-way key, wires and sandpaper.</p>
+  </section>
+
+  <section class="sec"><h3>Theory</h3>
+    <div class="kid">
+      <h4>In simple words</h4>
+      <p>The galvanometer is a narrow village lane. Only a few cars fit. To measure heavy traffic, build a wide express highway next to it. This highway is the <b>shunt S</b>, a small resistance connected in parallel.</p>
+      <p>Most cars take the highway and only a safe few use the lane. The needle only sees the few cars in the lane, but because we know the split, we can relabel the scale for the full traffic.</p>
+      <p>An ammeter goes in the middle of the road (in series) and counts every car, so it must be very easy to pass through. That is why an ammeter has a very small resistance.</p>
+    </div>
+    <div class="formula">Current in galvanometer:  Ig = n × k
+Current in shunt:  I − Ig
+Same voltage on both:  Ig × G = (I − Ig) × S
+Shunt resistance:  S = Ig × G / (I − Ig)
+Reading in amperes = θ × (I / n)       (one division = I / n)</div>
+  </section>
+
+  <section class="sec"><h3>Circuit diagram and simulator</h3>
+    <p>Tap "Use calculated S". Slide the current and compare the converted ammeter with the standard ammeter.</p>
+    <div id="sim7"></div>
+  </section>
+
+  <section class="sec"><h3>Procedure</h3>
+    <div class="two-col">
+      <div class="pane"><h4>In the real lab</h4>
+        <ol class="steps">
+          <li>Find G and k (Experiment 4). Calculate Ig = n·k.</li>
+          <li>Calculate S = Ig·G/(I − Ig) for the range I you want.</li>
+          <li>Connect S in parallel with the galvanometer.</li>
+          <li>Connect this converted ammeter in series with a standard ammeter, a rheostat, a key and a cell.</li>
+          <li>Change the current with the rheostat. Take 6 readings.</li>
+          <li>Convert deflections into amperes and compare.</li>
+        </ol></div>
+      <div class="pane"><h4>In this simulator</h4>
+        <ol class="steps">
+          <li>Enter G, k and the range you want.</li>
+          <li>Tap "Use calculated S".</li>
+          <li>Close K1 and slide the current.</li>
+          <li>Tap "Record reading" 6 times.</li>
+          <li>See how the current splits between G and S.</li>
+        </ol></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>Precautions</h3>
+    <ul class="tight">
+      <li>The ammeter must be in series. Never connect it directly across a battery.</li>
+      <li>The shunt must have the correct value. If you use wire, its length must be exact.</li>
+      <li>Start with the rheostat at maximum resistance so the current is small.</li>
+      <li>Use a standard ammeter of the same range for verification.</li>
+    </ul>
+  </section>
+
+  <section class="sec"><h3>Viva questions</h3>
+    <details class="q"><summary>Why is the shunt connected in parallel?</summary><p>So that most of the current bypasses the galvanometer and only a safe amount passes through it.</p></details>
+    <details class="q"><summary>What is the resistance of an ideal ammeter?</summary><p>Zero. The combined resistance of G and S is G·S/(G + S), which is smaller than S.</p></details>
+    <details class="q"><summary>Why does a milliammeter have more resistance than an ammeter made from the same galvanometer?</summary><p>A smaller range needs a larger shunt, and a larger shunt gives a larger combined resistance.</p></details>
+    <details class="q"><summary>What happens if the ammeter is connected in parallel?</summary><p>Its very small resistance makes a near short circuit. A huge current flows and the meter or the source can be damaged.</p></details>
+  </section>
+</article>
+
+<!-- ============ EXPERIMENT 8 ============ -->
+<article id="exp8" class="exp" hidden>
+  <h2 class="exp-title"><span class="num">8</span>Series, parallel and logic gates</h2>
+
+  <section class="sec"><h3>Aim</h3>
+    <div class="aim">
+      <p>(a) To study series and parallel combinations of resistors and capacitors and verify the formulas.</p>
+      <p>(b) To verify the truth tables of logic gates.</p>
+    </div>
+  </section>
+
+  <div class="seg" role="group" aria-label="Choose part">
+    <button type="button" id="e8-pa" aria-pressed="true">Resistors and capacitors</button>
+    <button type="button" id="e8-pb" aria-pressed="false">Logic gates</button>
+  </div>
+
+  <div id="e8-partA">
+    <section class="sec"><h3>What you need</h3>
+      <p>Resistors, capacitors, a 6 V DC source, a multimeter and an LCR meter (or capacitance meter), a breadboard and wires.</p>
+    </section>
+    <section class="sec"><h3>Theory</h3>
+      <div class="kid">
+        <h4>In simple words</h4>
+        <p><b>Resistors in series</b> are like one road with many speed bumps. Every bump slows you down, so the bumps add up: <b>R = R1 + R2 + ...</b></p>
+        <p><b>Resistors in parallel</b> are like several roads open at once. More roads make travel easier, so the total is <b>smaller than the smallest road</b>.</p>
+        <p><b>Capacitors</b> are like water tanks that store charge. They behave the opposite way. Tanks side by side (parallel) give one bigger tank, so they add. Tanks in series are harder to fill and the total is smaller than the smallest tank.</p>
+      </div>
+      <div class="formula">Resistors in series:    R = R1 + R2 + R3
+Resistors in parallel:  1/R = 1/R1 + 1/R2 + 1/R3
+Capacitors in parallel: C = C1 + C2 + C3
+Capacitors in series:   1/C = 1/C1 + 1/C2 + 1/C3
+Capacitor charge:  Q = C × V      (series: same Q, parallel: same V)</div>
+    </section>
+    <section class="sec"><h3>Circuit diagram and simulator</h3>
+      <div id="sim8a"></div>
+    </section>
+    <section class="sec"><h3>Procedure</h3>
+      <div class="two-col">
+        <div class="pane"><h4>In the real lab</h4>
+          <ol class="steps">
+            <li>Measure each resistor (or capacitor) alone with the meter.</li>
+            <li>Connect them in series. Measure the total.</li>
+            <li>Connect them in parallel. Measure the total.</li>
+            <li>Calculate the total with the formula and compare with the meter.</li>
+          </ol></div>
+        <div class="pane"><h4>In this simulator</h4>
+          <ol class="steps">
+            <li>Pick resistors or capacitors, series or parallel, and how many.</li>
+            <li>Type your own values.</li>
+            <li>Work out the total on paper, enter it in "Check my answer".</li>
+            <li>Tap "Record reading" to fill the table.</li>
+          </ol></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="e8-partB" hidden>
+    <section class="sec"><h3>What you need</h3>
+      <p>A digital trainer kit (or a breadboard with a 5 V supply), the ICs 7408 (AND), 7432 (OR), 7404 (NOT), 7400 (NAND), 7402 (NOR) and 7486 (XOR), two switches, an LED with a 330 Ω resistor and connecting wires.</p>
+    </section>
+    <section class="sec"><h3>Theory</h3>
+      <div class="kid">
+        <h4>In simple words</h4>
+        <p>Computers only understand two things: <b>1</b> (switch ON, about 5 V) and <b>0</b> (switch OFF, about 0 V). A <b>logic gate</b> is a small decision maker. It looks at its input switches and decides whether the output light should be ON or OFF.</p>
+        <ul class="tight">
+          <li><b>AND</b>: the light is ON only if switch A <i>and</i> switch B are ON. Like two keys needed to open a safe.</li>
+          <li><b>OR</b>: the light is ON if A <i>or</i> B (or both) is ON. Like two doors into the same room.</li>
+          <li><b>NOT</b>: the opposite. Input 1 gives 0. Input 0 gives 1.</li>
+          <li><b>NAND</b>: NOT of AND. It is ON for everything except both switches ON.</li>
+          <li><b>NOR</b>: NOT of OR. It is ON only when both switches are OFF.</li>
+          <li><b>XOR</b>: ON when the two inputs are <i>different</i>.</li>
+          <li><b>XNOR</b>: ON when the two inputs are the <i>same</i>.</li>
+        </ul>
+        <p>A <b>truth table</b> lists every possible input and the output you should get.</p>
+      </div>
+    </section>
+    <section class="sec"><h3>Circuit diagram and simulator</h3>
+      <div id="sim8b"></div>
+    </section>
+    <section class="sec"><h3>Procedure</h3>
+      <div class="two-col">
+        <div class="pane"><h4>In the real lab</h4>
+          <ol class="steps">
+            <li>Place the IC on the trainer or breadboard.</li>
+            <li>Connect +5 V to pin 14 and ground to pin 7.</li>
+            <li>Connect the inputs to the two switches and the output to the LED (with the 330 Ω resistor).</li>
+            <li>Try all four input combinations and note whether the LED is ON (1) or OFF (0).</li>
+            <li>Compare with the truth table. Repeat for each gate.</li>
+          </ol></div>
+        <div class="pane"><h4>In this simulator</h4>
+          <ol class="steps">
+            <li>Choose a gate.</li>
+            <li>Tap the input boxes A and B to set 0 or 1.</li>
+            <li>Visit all rows. The table ticks each row you have tested.</li>
+            <li>Try "Mystery gate": test it and guess which gate it is.</li>
+          </ol></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="sec"><h3>Precautions</h3>
+    <ul class="tight">
+      <li>Never connect the IC power the wrong way round (pin 14 is +5 V, pin 7 is ground).</li>
+      <li>Always use a resistor in series with an LED.</li>
+      <li>Do not leave inputs floating. Connect them to 0 V or 5 V.</li>
+      <li>For capacitors, discharge them before measuring. Electrolytic capacitors have a + and − side.</li>
+    </ul>
+  </section>
+
+  <section class="sec"><h3>Viva questions</h3>
+    <details class="q"><summary>Why is the parallel resistance smaller than the smallest resistor?</summary><p>Each extra path gives the current one more way to flow, so the overall resistance falls.</p></details>
+    <details class="q"><summary>Why are the capacitor formulas opposite to the resistor formulas?</summary><p>Capacitors in parallel increase the plate area, so the capacitance adds. In series the plate gap effectively grows, so the total capacitance drops.</p></details>
+    <details class="q"><summary>Which gates are called universal gates?</summary><p>NAND and NOR. Any other gate can be built using only one of them.</p></details>
+    <details class="q"><summary>What voltage means logic 1 in a TTL IC?</summary><p>About 5 V (anything above roughly 2 V counts as high). Logic 0 is about 0 V (below roughly 0.8 V).</p></details>
+  </section>
+</article>
+
+</main>
+</div>
+
+<footer class="devby">Developed by Ms. Naveera Nazneen, Physics department</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const fx=(x,d=2)=>Number.isFinite(x)?Number(x).toFixed(d):'–';
+const jit=s=>{const x=Math.sin(s*127.1+311.7)*43758.5453;return (x-Math.floor(x))*2-1;};
+const noisy=()=>$('#noise').checked;
+const reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let toastT;
+function toast(msg,kind){const t=$('#toast');t.textContent=msg;t.className='show '+(kind||'');clearTimeout(toastT);toastT=setTimeout(()=>{t.className='';},3800);}
+const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
+
+/* ---------- slider with number box and fine buttons ---------- */
+function sliderHTML(id,label,min,max,step,val,unit,fine){
+  return `<div class="ctl" data-id="${id}">
+    <div class="ctl-top"><label for="${id}-n">${label}</label>
+      <span class="ctl-num"><input type="number" id="${id}-n" inputmode="decimal" step="any" value="${val}"><span class="unit">${unit}</span></span></div>
+    <input type="range" id="${id}-r" min="${min}" max="${max}" step="${step}" value="${val}" aria-label="${label}">
+    ${fine?`<div class="fine">${fine.map(d=>`<button type="button" class="btn tiny" data-d="${d}">${d>0?'+':'−'}${Math.abs(d)}</button>`).join('')}</div>`:''}
+  </div>`;
+}
+function bindSlider(id,cb){
+  const r=$('#'+id+'-r'),n=$('#'+id+'-n'),root=$(`.ctl[data-id="${id}"]`);
+  const dp=(String(r.step).split('.')[1]||'').length;
+  const api={
+    get(){const v=parseFloat(n.value);return Number.isFinite(v)?v:0;},
+    set(v,silent){v=clamp(v,+r.min,+r.max);const dd=Math.max(dp,3);v=+v.toFixed(dd);n.value=v;r.value=v;if(!silent)cb(v);},
+    range(min,max){r.min=min;r.max=max;}
+  };
+  r.addEventListener('input',()=>{n.value=r.value;cb(parseFloat(r.value));});
+  n.addEventListener('input',()=>{let v=parseFloat(n.value);if(!Number.isFinite(v))return;v=clamp(v,+r.min,+r.max);r.value=v;cb(v);});
+  n.addEventListener('change',()=>{let v=parseFloat(n.value);if(!Number.isFinite(v))v=+r.min;v=clamp(v,+r.min,+r.max);n.value=v;r.value=v;cb(v);});
+  $$('.fine .btn',root).forEach(b=>b.addEventListener('click',()=>api.set(api.get()+parseFloat(b.dataset.d))));
+  return api;
+}
+
+/* ---------- keys (switches) in SVG ---------- */
+const keyMeta={};
+function keyPos(m,closed){
+  if(m.o==='h')return {x1:m.x-18,y1:m.y,x2:closed?m.x+18:m.x+12,y2:closed?m.y:m.y-16};
+  return {x1:m.x,y1:m.y-18,x2:closed?m.x:m.x+16,y2:closed?m.y+18:m.y+12};
+}
+function keyHTML(id,o,x,y,label,lx,ly){
+  keyMeta[id]={o,x,y};
+  const p=keyPos(keyMeta[id],false);
+  const a=o==='h'?[x-18,y]:[x,y-18], b=o==='h'?[x+18,y]:[x,y+18];
+  return `<g class="key" id="${id}" tabindex="0" role="button" aria-label="Key ${label}">
+    <rect x="${x-26}" y="${y-26}" width="52" height="52" fill="transparent"/>
+    <circle class="dot" cx="${a[0]}" cy="${a[1]}" r="3.6"/><circle class="dot" cx="${b[0]}" cy="${b[1]}" r="3.6"/>
+    <line class="lever" x1="${p.x1}" y1="${p.y1}" x2="${p.x2}" y2="${p.y2}"/>
+    <text class="t" x="${lx}" y="${ly}" text-anchor="middle">${label}</text></g>`;
+}
+function setKey(id,closed){
+  const g=$('#'+id);if(!g)return;const l=$('.lever',g);const p=keyPos(keyMeta[id],closed);
+  l.setAttribute('x2',p.x2);l.setAttribute('y2',p.y2);g.classList.toggle('closed',closed);
+}
+function onKey(id,fn){
+  const g=$('#'+id);
+  g.addEventListener('click',fn);
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn();}});
+}
+function pressBtn(btn,on,name){btn.setAttribute('aria-pressed',on?'true':'false');btn.textContent=name+(on?' closed':' open');}
+
+/* ---------- dial ---------- */
+const dialCfg={},dialAng={},dialAnim={};
+function dialHTML(o){
+  dialCfg[o.id]=o;
+  const cx=150,cy=140,r=112;
+  const P=(a,rr)=>{const t=a*Math.PI/180;return [cx+rr*Math.sin(t),cy-rr*Math.cos(t)];};
+  const ang=v=>o.angLo+(v-o.lo)/(o.hi-o.lo)*(o.angHi-o.angLo);
+  const a0=P(o.angLo,r),a1=P(o.angHi,r);
+  let s=`<svg viewBox="0 0 300 178" class="dial" id="${o.id}" role="img" aria-label="${o.label}">
+    <rect x="6" y="6" width="288" height="166" rx="16" fill="#F3F6F2"/>
+    <path d="M${a0[0]} ${a0[1]} A${r} ${r} 0 0 1 ${a1[0]} ${a1[1]}" fill="none" stroke="#172B3A" stroke-width="2"/>`;
+  const steps=Math.round((o.hi-o.lo)/o.minor);
+  for(let i=0;i<=steps;i++){
+    const v=o.lo+i*o.minor;
+    const isMajor=Math.abs(v/o.major-Math.round(v/o.major))<1e-6;
+    const p1=P(ang(v),r),p2=P(ang(v),r-(isMajor?15:7));
+    s+=`<line x1="${p1[0]}" y1="${p1[1]}" x2="${p2[0]}" y2="${p2[1]}" stroke="#172B3A" stroke-width="${isMajor?2:1}"/>`;
+    if(isMajor){const tp=P(ang(v),r-29);s+=`<text x="${tp[0]}" y="${tp[1]+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#172B3A">${Math.abs(Math.round(v*100)/100)}</text>`;}
+  }
+  s+=`<text x="150" y="112" text-anchor="middle" font-size="22" font-weight="800" fill="#0E7C86">${o.sym}</text>
+    <text x="150" y="130" text-anchor="middle" font-size="10" fill="#42596A">${o.unit}</text>
+    <g class="needle" transform="rotate(${ang(Math.max(0,o.lo))} 150 140)"><line x1="150" y1="140" x2="150" y2="40" stroke="#D1495B" stroke-width="2.6" stroke-linecap="round"/></g>
+    <circle cx="150" cy="140" r="7" fill="#172B3A"/></svg>`;
+  dialAng[o.id]=ang(Math.max(0,o.lo));
+  return s;
+}
+function setDial(id,v){
+  const o=dialCfg[id],range=o.hi-o.lo;
+  const vv=clamp(v,o.lo-0.05*range,o.hi+0.05*range);
+  const target=o.angLo+(vv-o.lo)/range*(o.angHi-o.angLo);
+  const el=$('#'+id+' .needle');if(!el)return;
+  const start=dialAng[id],t0=performance.now(),dur=reduceMotion?0:380;
+  cancelAnimationFrame(dialAnim[id]);
+  const step=now=>{
+    const p=dur?clamp((now-t0)/dur,0,1):1,e=1-Math.pow(1-p,3),a=start+(target-start)*e;
+    dialAng[id]=a;el.setAttribute('transform',`rotate(${a} 150 140)`);
+    if(p<1)dialAnim[id]=requestAnimationFrame(step);
+  };
+  dialAnim[id]=requestAnimationFrame(step);
+}
+
+/* ---------- little SVG symbols ---------- */
+const zigH='M-22 0 H-16 L-12 -8 L-4 8 L4 -8 L12 8 L16 0 H22';
+const capH='M-22 0 H-4 M-4 -13 V13 M4 -13 V13 M4 0 H22';
+function battery(x,yL,yS){ // long plate at yL (+), short at yS (-)
+  return `<path class="c" d="M${x-12} ${yL} H${x+12}" style="stroke-width:3.4"/><path class="c" d="M${x-7} ${yS} H${x+7}" style="stroke-width:5.5"/>`;
+}
+function circ(cx,cy,r,txt){return `<circle class="c" cx="${cx}" cy="${cy}" r="${r}" style="fill:var(--bench2)"/><text class="tb" x="${cx}" y="${cy+5}" text-anchor="middle">${txt}</text>`;}
+
+/* ---------- tabs ---------- */
+function show(id){
+  $$('.exp').forEach(a=>{a.hidden=a.id!==id;});
+  $$('#tabs button').forEach(b=>b.setAttribute('aria-current',b.dataset.exp===id?'page':'false'));
+  try{history.replaceState(null,'','#'+id);}catch(e){}
+  window.scrollTo(0,0);
+}
+$$('#tabs button').forEach(b=>b.addEventListener('click',()=>show(b.dataset.exp)));
+$('#print').addEventListener('click',()=>{try{window.print();}catch(e){toast('Printing is not available here.');}});
+
+/* =====================================================================
+   EXPERIMENT 4
+   ===================================================================== */
+(function(){
+  const s={E:2,k:2.5e-6,n:30,G:100,R:30000,S:100,k1:false,k2:false,rows:[]};
+  const newG=()=>{s.G=Math.round(60+Math.random()*120);};
+  newG();
+  $('#sim4').innerHTML=`
+  <div class="bench">
+   <div class="bench-grid two">
+    <svg class="circuit" id="c4" viewBox="0 0 360 232" role="img" aria-label="Circuit for the half deflection method">
+      <g id="c4-main"><path class="w" d="M30 30 H52 M88 30 H130 M190 30 H250 M250 30 V93 M250 137 V200 M30 30 V108 M30 124 V200 H250"/></g>
+      <g id="c4-sh"><path class="w" d="M250 30 H320 M320 30 V61 M320 97 V125 M320 165 V200 M250 200 H320"/></g>
+      ${battery(30,108,124)}
+      <text class="t" x="46" y="120">E = 2 V</text>
+      ${keyHTML('c4-k1','h',70,30,'K1',70,14)}
+      <rect class="c" x="130" y="20" width="60" height="20" rx="3"/><text class="t" x="160" y="14" text-anchor="middle">R (high)</text>
+      ${circ(250,115,22,'G')}
+      <text class="ts" x="250" y="152" text-anchor="middle">unknown</text>
+      ${keyHTML('c4-k2','v',320,79,'K2',341,82)}
+      <rect class="c" x="308" y="125" width="24" height="40"/><text class="t" x="300" y="148" text-anchor="end">S</text>
+      <circle class="dot" cx="250" cy="30" r="4"/><circle class="dot" cx="250" cy="200" r="4"/>
+    </svg>
+    <div>
+      ${dialHTML({id:'d4',lo:-30,hi:30,major:10,minor:1,angLo:-58,angHi:58,sym:'G',unit:'divisions',label:'Galvanometer dial'})}
+      <div class="ros">
+        <div class="ro"><b id="e4-th1">–</b><small>θ with K2 open</small></div>
+        <div class="ro"><b id="e4-half">–</b><small>target θ/2</small></div>
+        <div class="ro"><b id="e4-now">0.00</b><small>needle now</small></div>
+      </div>
+      <div id="e4-msg" class="msg"></div>
+    </div>
+   </div>
+   <div class="row keys">
+     <button class="btn key" id="e4-b1" type="button" aria-pressed="false">K1 open</button>
+     <button class="btn key" id="e4-b2" type="button" aria-pressed="false">K2 open</button>
+   </div>
+   ${sliderHTML('e4R','High resistance R',0,60000,100,30000,'Ω',[-1000,-100,100,1000])}
+   <div class="row"><button class="btn ghost" id="e4-set30" type="button">Set R for 30 divisions</button></div>
+   ${sliderHTML('e4S','Shunt resistance S',0,300,0.5,100,'Ω',[-1,-0.1,0.1,1])}
+   <div class="row">
+     <button class="btn" id="e4-rec" type="button">Record reading</button>
+     <button class="btn ghost" id="e4-undo" type="button">Undo last</button>
+     <button class="btn ghost" id="e4-clear" type="button">Clear table</button>
+     <button class="btn ghost" id="e4-new" type="button">New galvanometer</button>
+     <button class="btn ghost" id="e4-reveal" type="button">Reveal true G</button>
+   </div>
+  </div>
+  <h4>Observation table</h4>
+  <div class="tw"><table><thead><tr><th>No.</th><th>R (Ω)</th><th>θ (div)</th><th>θ/2 (div)</th><th>S (Ω)</th><th>G = RS/(R−S) (Ω)</th></tr></thead><tbody id="e4-tb"></tbody></table></div>
+  <h4 style="margin-top:14px">Calculation and result</h4>
+  <div class="result" id="e4-res"></div>`;
+
+  const sR=bindSlider('e4R',v=>{s.R=v;update();});
+  const sS=bindSlider('e4S',v=>{s.S=v;update();});
+  const theta1=()=>s.E/(s.R+s.G)/s.k;
+  function theta(){
+    if(!s.k1)return 0;
+    if(!s.k2){const d=s.R+s.G;return d>0?s.E/d/s.k:0;}
+    const d=s.R*(s.G+s.S)+s.G*s.S;return d>0?s.E*s.S/d/s.k:0;
+  }
+  function update(){
+    const th=theta(),t1=theta1();
+    setKey('c4-k1',s.k1);setKey('c4-k2',s.k2);
+    pressBtn($('#e4-b1'),s.k1,'K1');pressBtn($('#e4-b2'),s.k2,'K2');
+    $('#c4-main').classList.toggle('live',s.k1);
+    $('#c4-sh').classList.toggle('live',s.k1&&s.k2);
+    setDial('d4',th);
+    $('#e4-th1').textContent=t1>=0&&t1<=s.n*2?fx(t1,2):'off scale';
+    $('#e4-half').textContent=t1>=0&&t1<=s.n*2?fx(t1/2,2):'–';
+    $('#e4-now').textContent=th>2*s.n?'off scale':fx(th,2);
+    const m=$('#e4-msg');let cls='msg',txt;
+    if(!s.k1)txt='K1 is open, so no current flows. Tap K1 to close it.';
+    else if(th>2*s.n){cls='msg bad';txt='Danger! Far too much current. A real galvanometer could burn. Increase R.';}
+    else if(th>s.n){cls='msg bad';txt='The pointer is off the scale. Increase R until the needle is inside the scale.';}
+    else if(!s.k2)txt='Note θ (K2 open). Then close K2 and change S until the needle shows θ/2.';
+    else{
+      if(t1>s.n||t1<6){cls='msg bad';txt='With K2 open the deflection must be between 6 and 30 divisions. Change R.';}
+      else if(Math.abs(th-t1/2)<=0.1){cls='msg good';txt='Half deflection reached. Tap "Record reading".';}
+      else txt=`Needle at ${fx(th,2)}, target is ${fx(t1/2,2)}. ${th>t1/2?'Make S smaller.':'Make S bigger.'}`;
+    }
+    $('#e4-msg').className=cls;$('#e4-msg').textContent=txt;
+  }
+  function renderTable(){
+    const tb=$('#e4-tb');
+    tb.innerHTML=s.rows.length?s.rows.map((r,i)=>`<tr><td>${i+1}</td><td>${fx(r.R,0)}</td><td>${fx(r.th,2)}</td><td>${fx(r.th/2,2)}</td><td>${fx(r.S,1)}</td><td>${fx(r.G,1)}</td></tr>`).join(''):'<tr><td colspan="6" class="empty">No readings yet. Close K1 and K2, find half deflection, then tap Record reading.</td></tr>';
+    const res=$('#e4-res');
+    if(!s.rows.length){res.innerHTML='Mean G = ___ Ω &nbsp; Figure of merit k = ___ µA/div';return;}
+    const Gm=mean(s.rows.map(r=>r.G));
+    const km=mean(s.rows.map(r=>s.E/((r.R+Gm)*r.th)));
+    res.innerHTML=`Mean G = ${fx(Gm,1)} Ω<br>Figure of merit k = E / [(R + G)·θ] = ${fx(km*1e6,2)} µA per division<br>Biggest safe current = n·k = ${fx(s.n*km*1e6,1)} µA<span id="e4-true"></span>`;
+  }
+  $('#e4-b1').addEventListener('click',()=>{s.k1=!s.k1;update();});
+  $('#e4-b2').addEventListener('click',()=>{s.k2=!s.k2;update();});
+  onKey('c4-k1',()=>{s.k1=!s.k1;update();});
+  onKey('c4-k2',()=>{s.k2=!s.k2;update();});
+  $('#e4-set30').addEventListener('click',()=>{sR.set(Math.round(s.E/(30*s.k)-s.G),false);});
+  $('#e4-rec').addEventListener('click',()=>{
+    if(!(s.k1&&s.k2))return toast('Close both keys, K1 and K2, first.','bad');
+    const t1=theta1(),t2=theta();
+    if(t1<6||t1>s.n)return toast('Set R so that the deflection with K2 open is between 6 and 30 divisions.','bad');
+    if(Math.abs(t2-t1/2)>0.1)return toast(`Not half yet. Needle shows ${fx(t2,2)}, target is ${fx(t1/2,2)}. Adjust S.`,'bad');
+    if(s.R<=s.S)return toast('R must be much bigger than S.','bad');
+    s.rows.push({R:s.R,th:t1,S:s.S,G:s.R*s.S/(s.R-s.S)});
+    renderTable();toast(`Reading ${s.rows.length} saved.`,'good');
+  });
+  $('#e4-undo').addEventListener('click',()=>{s.rows.pop();renderTable();});
+  $('#e4-clear').addEventListener('click',()=>{s.rows=[];renderTable();});
+  $('#e4-new').addEventListener('click',()=>{newG();s.rows=[];s.k2=false;renderTable();update();toast('New galvanometer with a hidden resistance. Find G!');});
+  $('#e4-reveal').addEventListener('click',()=>{
+    if(!s.rows.length)return toast('Record at least one reading first.');
+    const Gm=mean(s.rows.map(r=>r.G));
+    const msg=`True G = ${s.G} Ω. Your mean = ${fx(Gm,1)} Ω (error ${fx(Math.abs(Gm-s.G)/s.G*100,1)}%).`;
+    toast(msg,'good');$('#e4-true').innerHTML=`<br>${msg}`;
+  });
+  renderTable();update();
+})();
+
+/* =====================================================================
+   EXPERIMENT 5
+   ===================================================================== */
+(function(){
+  const RES={'10':10,'22':22,'47':47,'100':100,'220':220};
+  const mystOpts=[33,68,150,330,15,470];
+  const s={V:0,key:false,res:'100',rows:[],myst:mystOpts[Math.floor(Math.random()*mystOpts.length)]};
+  const label=k=>k==='bulb'?'Bulb':k==='mystery'?'Mystery':k+' Ω';
+  $('#sim5').innerHTML=`
+  <div class="bench">
+   <div class="bench-grid two">
+    <svg class="circuit" id="c5" viewBox="0 0 360 232" role="img" aria-label="Circuit to verify Ohm's law">
+      <g id="c5-main"><path class="w" d="M30 30 H52 M88 30 H152 M188 30 H330 M330 30 V92 M330 128 V200 M260 30 V78 M260 142 V200 M30 30 V108 M30 124 V200 H330"/></g>
+      ${battery(30,108,124)}
+      <path d="M12 140 L48 94" stroke="#F0A202" stroke-width="2.4" fill="none"/><path d="M48 94 L40 98 M48 94 L46 103" stroke="#F0A202" stroke-width="2.4" fill="none"/>
+      <text class="t" x="46" y="130">0–12 V</text>
+      ${keyHTML('c5-k','h',70,30,'Key',70,14)}
+      ${circ(170,30,18,'A')}<text class="ts" x="170" y="62" text-anchor="middle">ammeter</text>
+      <g id="c5-zig"><path class="c" d="M260 78 V86 L250 92 L270 104 L250 116 L270 128 L260 134 V142"/></g>
+      <g id="c5-bulb" hidden><circle class="c" cx="260" cy="110" r="22" style="fill:var(--bench2)"/><path class="c" d="M245 95 L275 125 M275 95 L245 125"/></g>
+      <text class="t" x="240" y="112" text-anchor="end" id="c5-rl">R</text>
+      ${circ(330,110,18,'V')}<text class="ts" x="318" y="146" text-anchor="end">voltmeter</text>
+      <circle class="dot" cx="260" cy="30" r="4"/><circle class="dot" cx="260" cy="200" r="4"/>
+    </svg>
+    <div>
+      <div class="ros">
+        <div class="ro"><b id="e5-v">0.00</b><small>voltmeter (V)</small></div>
+        <div class="ro"><b id="e5-i">0.0</b><small>ammeter (mA)</small></div>
+        <div class="ro"><b id="e5-r">–</b><small>V ÷ I (Ω)</small></div>
+      </div>
+      <div id="e5-msg" class="msg"></div>
+    </div>
+   </div>
+   <div class="row keys"><button class="btn key" id="e5-b" type="button" aria-pressed="false">Key open</button></div>
+   <div class="chips" role="group" aria-label="Choose resistor">
+     ${['10','22','47','100','220'].map(k=>`<button class="chip" type="button" data-res="${k}" aria-pressed="false">${k} Ω</button>`).join('')}
+     <button class="chip" type="button" data-res="mystery" aria-pressed="false">Mystery</button>
+     <button class="chip" type="button" data-res="bulb" aria-pressed="false">Bulb</button>
+   </div>
+   ${sliderHTML('e5V','Source voltage',0,12,0.5,0,'V',[-1,-0.5,0.5,1])}
+   <div class="row">
+     <button class="btn" id="e5-add" type="button">Add reading</button>
+     <button class="btn ghost" id="e5-auto" type="button">Auto-fill 6 readings</button>
+     <button class="btn ghost" id="e5-undo" type="button">Undo last</button>
+     <button class="btn ghost" id="e5-clear" type="button">Clear all</button>
+     <button class="btn ghost" id="e5-reveal" type="button">Reveal mystery</button>
+   </div>
+  </div>
+  <h4>Graph of V against I</h4>
+  <svg class="graph" id="e5-g" viewBox="0 0 360 250" role="img" aria-label="Graph of voltage against current"></svg>
+  <div class="result" id="e5-verdict" style="margin:10px 0">Add at least 3 readings to see the result.</div>
+  <h4>Observation table</h4>
+  <div class="tw"><table><thead><tr><th>No.</th><th>Resistor</th><th>V (volt)</th><th>I (mA)</th><th>V/I (Ω)</th></tr></thead><tbody id="e5-tb"></tbody></table></div>`;
+
+  const sV=bindSlider('e5V',v=>{s.V=v;update();});
+  const resVal=()=>s.res==='mystery'?s.myst:RES[s.res];
+  function current(){
+    if(!s.key||s.V<=0)return 0;
+    if(s.res==='bulb'){const a=8,b=40;return (-a+Math.sqrt(a*a+4*b*s.V))/(2*b);}
+    return s.V/resVal();
+  }
+  const seedOf=()=>(s.res==='bulb'?7:s.res==='mystery'?3:parseFloat(s.res)/10);
+  function meters(){
+    const I=current(),V=s.key?s.V:0;
+    if(!noisy()||I===0)return {V,I};
+    return {V:V*(1+0.01*jit(V*13.7+seedOf())),I:I*(1+0.01*jit(V*7.3+seedOf()*2))};
+  }
+  function niceCeil(v){const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,2,2.5,5,10]){if(m*p>=v)return m*p;}return 10*p;}
+  function nominal(){return s.res==='bulb'?0.456:12/resVal();}
+  function graph(){
+    const g=$('#e5-g'),L=46,B=212,T=14,Rr=346;
+    const xmax=niceCeil(nominal()*1000*1.02),ymax=12;
+    const X=i=>L+(i/xmax)*(Rr-L),Y=v=>B-(v/ymax)*(B-T);
+    let h=`<rect x="0" y="0" width="360" height="250" fill="#fff"/>`;
+    for(let i=0;i<=5;i++){
+      const xv=xmax*i/5,xx=X(xv);h+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${B}" stroke="#DDEBE8"/><text x="${xx}" y="${B+14}" text-anchor="middle">${+xv.toFixed(1)}</text>`;
+      const yv=ymax*i/5,yy=Y(yv);h+=`<line x1="${L}" y1="${yy}" x2="${Rr}" y2="${yy}" stroke="#DDEBE8"/><text x="${L-6}" y="${yy+3}" text-anchor="end">${+yv.toFixed(1)}</text>`;
+    }
+    h+=`<line x1="${L}" y1="${B}" x2="${Rr}" y2="${B}" stroke="#172B3A" stroke-width="1.6"/><line x1="${L}" y1="${T}" x2="${L}" y2="${B}" stroke="#172B3A" stroke-width="1.6"/>
+        <text x="${(L+Rr)/2}" y="240" text-anchor="middle" font-weight="700">Current I (mA)</text>
+        <text x="12" y="${(T+B)/2}" text-anchor="middle" font-weight="700" transform="rotate(-90 12 ${(T+B)/2})">Voltage V (V)</text>`;
+    const pts=s.rows.filter(r=>r.key===s.res);
+    if(pts.length>=2){
+      let num=0,den=0;pts.forEach(p=>{num+=p.V*p.I/1000;den+=(p.I/1000)**2;});
+      const slope=num/den; // V per A
+      const xe=Math.min(xmax,12/slope*1000);
+      h+=`<line x1="${X(0)}" y1="${Y(0)}" x2="${X(xe)}" y2="${Y(slope*xe/1000)}" stroke="#0E7C86" stroke-width="2" stroke-dasharray="6 4"/>`;
+    }
+    pts.forEach(p=>{h+=`<circle cx="${X(p.I)}" cy="${Y(p.V)}" r="4.5" fill="#F0A202" stroke="#172B3A" stroke-width="1.4"/>`;});
+    g.innerHTML=h;
+  }
+  function verdict(){
+    const v=$('#e5-verdict'),pts=s.rows.filter(r=>r.key===s.res);
+    if(pts.length<3){v.textContent='Add at least 3 readings for this resistor to see the result.';return;}
+    const ratios=pts.map(p=>p.V/(p.I/1000));
+    const m=mean(ratios),spread=(Math.max(...ratios)-Math.min(...ratios))/m;
+    let num=0,den=0;pts.forEach(p=>{num+=p.V*p.I/1000;den+=(p.I/1000)**2;});
+    if(spread<0.05)v.innerHTML=`V/I is almost constant (about ${fx(m,1)} Ω) and the graph is a straight line through zero. Ohm's law is verified. Slope gives R = ${fx(num/den,1)} Ω.`;
+    else v.innerHTML=`V/I keeps changing (from ${fx(Math.min(...ratios),1)} Ω to ${fx(Math.max(...ratios),1)} Ω) and the graph bends. This part does not obey Ohm's law.`;
+  }
+  function renderTable(){
+    $('#e5-tb').innerHTML=s.rows.length?s.rows.map((r,i)=>`<tr><td>${i+1}</td><td>${label(r.key)}</td><td>${fx(r.V,2)}</td><td>${fx(r.I,1)}</td><td>${fx(r.V/(r.I/1000),1)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No readings yet. Close the key, set a voltage and tap Add reading.</td></tr>';
+  }
+  function update(){
+    setKey('c5-k',s.key);pressBtn($('#e5-b'),s.key,'Key');
+    $('#c5-main').classList.toggle('live',s.key&&s.V>0);
+    $('#c5-zig').hidden=s.res==='bulb';$('#c5-bulb').hidden=s.res!=='bulb';
+    $('#c5-rl').textContent=s.res==='bulb'?'bulb':s.res==='mystery'?'R = ?':'R';
+    $$('.chip',$('#sim5')).forEach(c=>c.setAttribute('aria-pressed',c.dataset.res===s.res?'true':'false'));
+    const m=meters();
+    $('#e5-v').textContent=fx(m.V,2);$('#e5-i').textContent=fx(m.I*1000,1);
+    $('#e5-r').textContent=m.I>0?fx(m.V/m.I,1):'–';
+    $('#e5-msg').className='msg';
+    $('#e5-msg').textContent=!s.key?'The key is open. Tap it to close the circuit.':s.V<=0?'Slide the voltage up to push current through the resistor.':s.res==='bulb'?'The bulb gets hotter as the voltage rises, so V ÷ I changes.':'Add readings at different voltages and watch V ÷ I.';
+    graph();verdict();
+  }
+  function add(V){
+    const save=s.V;s.V=V;const m=meters();
+    if(s.rows.some(r=>r.key===s.res&&Math.abs(r.V-m.V)<1e-9)){s.V=save;return false;}
+    s.rows.push({key:s.res,V:m.V,I:m.I*1000});s.V=save;return true;
+  }
+  $('#e5-b').addEventListener('click',()=>{s.key=!s.key;update();});
+  onKey('c5-k',()=>{s.key=!s.key;update();});
+  $$('.chip',$('#sim5')).forEach(c=>c.addEventListener('click',()=>{s.res=c.dataset.res;update();}));
+  $('#e5-add').addEventListener('click',()=>{
+    if(!s.key)return toast('Close the key first.','bad');
+    if(s.V<=0)return toast('Set a voltage above 0 V.','bad');
+    if(!add(s.V))return toast('You already have a reading at this voltage. Change V.','bad');
+    renderTable();update();toast('Reading saved.','good');
+  });
+  $('#e5-auto').addEventListener('click',()=>{
+    if(!s.key)return toast('Close the key first.','bad');
+    [2,4,6,8,10,12].forEach(v=>add(v));renderTable();update();
+  });
+  $('#e5-undo').addEventListener('click',()=>{s.rows.pop();renderTable();update();});
+  $('#e5-clear').addEventListener('click',()=>{s.rows=[];renderTable();update();});
+  $('#e5-reveal').addEventListener('click',()=>{
+    const pts=s.rows.filter(r=>r.key==='mystery');
+    let t=`The mystery resistor is ${s.myst} Ω.`;
+    if(pts.length>=2){let num=0,den=0;pts.forEach(p=>{num+=p.V*p.I/1000;den+=(p.I/1000)**2;});t+=` Your slope gave ${fx(num/den,1)} Ω.`;}
+    else t+=' Pick "Mystery", add readings and find its value from the slope first!';
+    toast(t,'good');
+  });
+  $('#noise').addEventListener('change',update);
+  renderTable();update();
+})();
+
+/* =====================================================================
+   EXPERIMENT 6
+   ===================================================================== */
+(function(){
+  const s={G:100,kuA:100,n:30,V:3,Rused:0,Vin:0,k1:false,rows:[]};
+  $('#sim6').innerHTML=`
+  <div class="bench">
+   <div class="field-grid">
+     <div class="field"><label for="e6G">Galvanometer G (Ω)</label><input class="num-in" style="width:100%" id="e6G" type="number" step="any" value="100"></div>
+     <div class="field"><label for="e6k">Figure of merit k (µA/div)</label><input class="num-in" style="width:100%" id="e6k" type="number" step="any" value="100"></div>
+     <div class="field"><label for="e6V">Range wanted (V)</label><input class="num-in" style="width:100%" id="e6V" type="number" step="any" value="3"></div>
+   </div>
+   <div class="ros">
+     <div class="ro"><b id="e6-ig">–</b><small>Ig = n·k (µA)</small></div>
+     <div class="ro"><b id="e6-rc">–</b><small>R = V/Ig − G (Ω)</small></div>
+     <div class="ro"><b id="e6-lc">–</b><small>one division (V)</small></div>
+   </div>
+   <div class="field-grid">
+     <div class="field"><label for="e6R">Series resistance R you use (Ω)</label><input class="num-in" style="width:100%" id="e6R" type="number" step="any" value="0"></div>
+     <div class="field" style="align-self:end"><button class="btn" id="e6-use" type="button" style="width:100%">Use calculated R</button></div>
+   </div>
+   <div class="bench-grid two">
+    <svg class="circuit" id="c6" viewBox="0 0 360 258" role="img" aria-label="Circuit to convert a galvanometer into a voltmeter">
+      <g id="c6-main"><path class="w" d="M25 30 H52 M88 30 H110 M270 30 H310 M310 30 V240 M25 30 V104 M25 122 V240 H310 M150 110 H230 M150 110 V122 M150 154 V168 M150 204 V215 H310 M230 110 V140 M230 172 V215"/><path class="w" id="c6-tapw" d="M150 110 V110"/></g>
+      ${battery(25,104,122)}
+      <text class="t" x="38" y="118" id="c6-vb">4 V</text>
+      ${keyHTML('c6-k','h',70,30,'K1',70,14)}
+      <rect class="c" x="110" y="22" width="160" height="16" rx="3"/>
+      <text class="ts" x="190" y="15" text-anchor="middle">rheostat as potential divider</text>
+      <path id="c6-arrow" class="c amber" d="M150 70 V42 M145 49 L150 41 L155 49"/>
+      <rect class="dashbox" x="108" y="100" width="84" height="122"/>
+      ${circ(150,138,16,'G')}
+      <rect class="c" x="138" y="168" width="24" height="36"/><text class="t" x="170" y="190">R</text>
+      ${circ(230,156,16,'V')}
+      <text class="ts" x="150" y="233" text-anchor="middle">converted V</text>
+      <text class="ts" x="240" y="233" text-anchor="middle">standard V</text>
+      <circle class="dot" cx="150" cy="110" r="3.5"/><circle class="dot" cx="230" cy="110" r="3.5"/>
+    </svg>
+    <div>
+      ${dialHTML({id:'d6',lo:0,hi:30,major:5,minor:1,angLo:-55,angHi:55,sym:'V',unit:'galvanometer divisions',label:'Converted voltmeter dial'})}
+      <div class="ros">
+        <div class="ro"><b id="e6-th">0.00</b><small>deflection θ</small></div>
+        <div class="ro"><b id="e6-conv">0.000</b><small>converted reading (V)</small></div>
+        <div class="ro"><b id="e6-ref">0.000</b><small>standard voltmeter (V)</small></div>
+      </div>
+      <div id="e6-msg" class="msg"></div>
+    </div>
+   </div>
+   <div class="row keys"><button class="btn key" id="e6-b" type="button" aria-pressed="false">K1 open</button></div>
+   ${sliderHTML('e6S','Voltage from the rheostat',0,3.6,0.01,0,'V',[-0.5,-0.1,0.1,0.5])}
+   <div class="row">
+     <button class="btn" id="e6-add" type="button">Record reading</button>
+     <button class="btn ghost" id="e6-undo" type="button">Undo last</button>
+     <button class="btn ghost" id="e6-clear" type="button">Clear table</button>
+   </div>
+  </div>
+  <h4>Observation table</h4>
+  <div class="tw"><table><thead><tr><th>No.</th><th>Deflection θ (div)</th><th>Converted V = θ × (V/n)</th><th>Standard voltmeter (V)</th><th>Error (V)</th></tr></thead><tbody id="e6-tb"></tbody></table></div>
+  <div class="result" id="e6-res" style="margin-top:12px"></div>`;
+
+  const sl=bindSlider('e6S',v=>{s.Vin=v;update();});
+  const Ig=()=>s.n*s.kuA*1e-6;
+  const Rcalc=()=>s.V/Ig()-s.G;
+  const Vb=()=>s.V*1.25;
+  function theta(){
+    if(!s.k1||s.Vin<=0)return 0;
+    const th=(s.Vin/(s.G+s.Rused))/(s.kuA*1e-6);
+    return th+(noisy()?0.15*jit(s.Vin*31.7):0);
+  }
+  const LC=()=>s.V/s.n;
+  function update(){
+    $('#e6-ig').textContent=fx(Ig()*1e6,0);
+    const rc=Rcalc();
+    $('#e6-rc').textContent=rc>=0?fx(rc,1):'too small';
+    $('#e6-lc').textContent=fx(LC(),3);
+    sl.range(0,+(s.V*1.2).toFixed(3));
+    $('#e6S-r').step=(s.V/300).toPrecision(2);
+    $('#c6-vb').textContent=fx(Vb(),2)+' V';
+    setKey('c6-k',s.k1);pressBtn($('#e6-b'),s.k1,'K1');
+    $('#c6-main').classList.toggle('live',s.k1);
+    const tx=270-clamp(s.Vin/Vb(),0,1)*160;
+    $('#c6-arrow').setAttribute('d',`M${tx} 74 V42 M${tx-5} 49 L${tx} 41 L${tx+5} 49`);
+    $('#c6-tapw').setAttribute('d',`M${tx} 74 V110 H150`);
+    const th=theta();
+    setDial('d6',th);
+    $('#e6-th').textContent=fx(th,2);
+    $('#e6-conv').textContent=fx(Math.max(0,th)*LC(),3);
+    $('#e6-ref').textContent=fx(s.k1?s.Vin:0,3);
+    const m=$('#e6-msg');let cls='msg',txt;
+    if(rc<0){cls='msg bad';txt='This range is too small. The galvanometer already reaches full scale below this voltage.';}
+    else if(!s.k1)txt='Close K1 and slide the voltage.';
+    else if(th>2*s.n){cls='msg bad';txt='Far too much current. A real galvanometer could burn. Check your R.';}
+    else if(th>s.n){cls='msg bad';txt='Off scale. The voltage is above the range, or R is too small.';}
+    else if(Math.abs(s.Rused-rc)/Math.max(rc,1)>0.01)txt='Your R is not the calculated value, so the converted reading will be wrong. Try "Use calculated R".';
+    else txt='R matches the calculation. The converted reading should agree with the standard voltmeter.';
+    m.className=cls;m.textContent=txt;
+  }
+  function renderTable(){
+    $('#e6-tb').innerHTML=s.rows.length?s.rows.map((r,i)=>`<tr><td>${i+1}</td><td>${fx(r.th,2)}</td><td>${fx(r.conv,3)}</td><td>${fx(r.ref,3)}</td><td>${fx(r.conv-r.ref,3)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No readings yet. Close K1, set a voltage and tap Record reading.</td></tr>';
+    const r=$('#e6-res');
+    if(s.rows.length<3){r.textContent='Take at least 3 readings to see the result.';return;}
+    const me=mean(s.rows.map(x=>Math.abs(x.conv-x.ref)));
+    r.innerHTML=`Mean error = ${fx(me,3)} V (${fx(me/s.V*100,1)}% of the range).<br>${me/s.V<0.02?`The galvanometer works as a voltmeter of range 0 to ${fx(s.V,2)} V with R = ${fx(s.Rused,1)} Ω in series.`:'The error is large. Check the value of R in series.'}`;
+  }
+  ['e6G','e6k','e6V'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+    const G=parseFloat($('#e6G').value),k=parseFloat($('#e6k').value),V=parseFloat($('#e6V').value);
+    if(G>0)s.G=G;if(k>0)s.kuA=k;if(V>0)s.V=V;
+    s.rows=[];sl.set(Math.min(s.Vin,s.V*1.2),true);s.Vin=sl.get();renderTable();update();
+  }));
+  $('#e6R').addEventListener('input',()=>{const v=parseFloat($('#e6R').value);s.Rused=v>=0?v:0;update();});
+  $('#e6-use').addEventListener('click',()=>{const r=Rcalc();if(r<0)return toast('Choose a bigger range first.','bad');s.Rused=+r.toFixed(1);$('#e6R').value=s.Rused;update();});
+  $('#e6-b').addEventListener('click',()=>{s.k1=!s.k1;update();});
+  onKey('c6-k',()=>{s.k1=!s.k1;update();});
+  $('#e6-add').addEventListener('click',()=>{
+    if(!s.k1)return toast('Close K1 first.','bad');
+    if(s.Vin<=0)return toast('Set a voltage above 0.','bad');
+    const th=theta();
+    if(th>s.n)return toast('The needle is off scale. Lower the voltage.','bad');
+    const ref=s.Vin*(1+(noisy()?0.005*jit(s.Vin*9.1):0));
+    s.rows.push({th,conv:th*LC(),ref});renderTable();toast('Reading saved.','good');
+  });
+  $('#e6-undo').addEventListener('click',()=>{s.rows.pop();renderTable();});
+  $('#e6-clear').addEventListener('click',()=>{s.rows=[];renderTable();});
+  $('#noise').addEventListener('change',update);
+  renderTable();update();
+})();
+
+/* =====================================================================
+   EXPERIMENT 7
+   ===================================================================== */
+(function(){
+  const s={G:100,kuA:100,n:30,I:30,Sused:0,Iin:0,k1:false,rows:[]};
+  $('#sim7').innerHTML=`
+  <div class="bench">
+   <div class="field-grid">
+     <div class="field"><label for="e7G">Galvanometer G (Ω)</label><input class="num-in" style="width:100%" id="e7G" type="number" step="any" value="100"></div>
+     <div class="field"><label for="e7k">Figure of merit k (µA/div)</label><input class="num-in" style="width:100%" id="e7k" type="number" step="any" value="100"></div>
+     <div class="field"><label for="e7I">Range wanted (mA)</label><input class="num-in" style="width:100%" id="e7I" type="number" step="any" value="30"></div>
+   </div>
+   <div class="ros">
+     <div class="ro"><b id="e7-ig">–</b><small>Ig = n·k (mA)</small></div>
+     <div class="ro"><b id="e7-sc">–</b><small>S = Ig·G/(I − Ig) (Ω)</small></div>
+     <div class="ro"><b id="e7-lc">–</b><small>one division (mA)</small></div>
+   </div>
+   <div class="field-grid">
+     <div class="field"><label for="e7S">Shunt S you use (Ω)</label><input class="num-in" style="width:100%" id="e7S" type="number" step="any" value="0"></div>
+     <div class="field" style="align-self:end"><button class="btn" id="e7-use" type="button" style="width:100%">Use calculated S</button></div>
+   </div>
+   <div class="bench-grid two">
+    <svg class="circuit" id="c7" viewBox="0 0 360 232" role="img" aria-label="Circuit to convert a galvanometer into an ammeter">
+      <g id="c7-main"><path class="w" d="M25 30 H52 M88 30 H120 M200 30 H310 M250 30 V52 M250 88 V120 M310 30 V55 M310 95 V120 M250 120 H310 M280 120 V138 M280 174 V215 H25 M25 30 V104 M25 122 V215"/></g>
+      ${battery(25,104,122)}
+      <text class="t" x="38" y="118">cell</text>
+      ${keyHTML('c7-k','h',70,30,'K1',70,14)}
+      <rect class="c" x="120" y="22" width="80" height="16" rx="3"/>
+      <path id="c7-arrow" class="c amber" d="M160 60 V42 M155 49 L160 41 L165 49"/>
+      <text class="t" x="160" y="74" text-anchor="middle" style="opacity:.8">rheostat</text>
+      <rect class="dashbox" x="230" y="16" width="100" height="122"/>
+      <text class="ts" x="280" y="12" text-anchor="middle">converted ammeter</text>
+      ${circ(250,70,18,'G')}
+      <rect class="c" x="298" y="55" width="24" height="40"/><text class="t" x="292" y="80" text-anchor="end">S</text>
+      ${circ(280,156,18,'A')}<text class="ts" x="256" y="160" text-anchor="end">standard A</text>
+      <circle class="dot" cx="250" cy="30" r="3.5"/><circle class="dot" cx="310" cy="30" r="3.5"/><circle class="dot" cx="280" cy="120" r="3.5"/>
+    </svg>
+    <div>
+      ${dialHTML({id:'d7',lo:0,hi:30,major:5,minor:1,angLo:-55,angHi:55,sym:'A',unit:'galvanometer divisions',label:'Converted ammeter dial'})}
+      <div class="ros">
+        <div class="ro"><b id="e7-th">0.00</b><small>deflection θ</small></div>
+        <div class="ro"><b id="e7-conv">0.00</b><small>converted reading (mA)</small></div>
+        <div class="ro"><b id="e7-ref">0.00</b><small>standard ammeter (mA)</small></div>
+      </div>
+      <div class="bar" id="e7-bar" aria-hidden="true"><i id="e7-bg" style="background:#F0A202;width:0"></i><i id="e7-bs" style="background:#3DC1A7;width:0"></i></div>
+      <div class="ts" style="margin-top:4px;font-size:.82rem;color:#9FB8C4"><span id="e7-split">Through G: 0 mA, through S: 0 mA</span></div>
+      <div id="e7-msg" class="msg"></div>
+    </div>
+   </div>
+   <div class="row keys"><button class="btn key" id="e7-b" type="button" aria-pressed="false">K1 open</button></div>
+   ${sliderHTML('e7S2','Current set by the rheostat',0,36,0.1,0,'mA',[-5,-1,1,5])}
+   <div class="row">
+     <button class="btn" id="e7-add" type="button">Record reading</button>
+     <button class="btn ghost" id="e7-undo" type="button">Undo last</button>
+     <button class="btn ghost" id="e7-clear" type="button">Clear table</button>
+   </div>
+  </div>
+  <h4>Observation table</h4>
+  <div class="tw"><table><thead><tr><th>No.</th><th>Deflection θ (div)</th><th>Converted I = θ × (I/n) (mA)</th><th>Standard ammeter (mA)</th><th>Error (mA)</th></tr></thead><tbody id="e7-tb"></tbody></table></div>
+  <div class="result" id="e7-res" style="margin-top:12px"></div>`;
+
+  const sl=bindSlider('e7S2',v=>{s.Iin=v;update();});
+  const Ig=()=>s.n*s.kuA*1e-3; // mA
+  const Scalc=()=>Ig()*s.G/(s.I-Ig());
+  const LC=()=>s.I/s.n;
+  function split(){
+    const I=s.k1?s.Iin:0,sh=s.Sused;
+    const igmA=(s.G+sh)>0?I*sh/(s.G+sh):0;
+    return {ig:igmA,is:I-igmA};
+  }
+  function theta(){
+    const {ig}=split();
+    return ig*1000/s.kuA+(noisy()&&s.k1&&s.Iin>0?0.15*jit(s.Iin*23.3):0);
+  }
+  function update(){
+    $('#e7-ig').textContent=fx(Ig(),2);
+    const sc=s.I>Ig()?Scalc():NaN;
+    $('#e7-sc').textContent=Number.isFinite(sc)?fx(sc,2):'range too small';
+    $('#e7-lc').textContent=fx(LC(),3);
+    sl.range(0,+(s.I*1.2).toFixed(2));
+    $('#e7S2-r').step=(s.I/300).toPrecision(2);
+    setKey('c7-k',s.k1);pressBtn($('#e7-b'),s.k1,'K1');
+    $('#c7-main').classList.toggle('live',s.k1&&s.Iin>0);
+    const ax=120+clamp(s.Iin/(s.I*1.2),0,1)*80;
+    $('#c7-arrow').setAttribute('d',`M${ax} 62 V42 M${ax-5} 49 L${ax} 41 L${ax+5} 49`);
+    const th=theta(),sp=split();
+    setDial('d7',th);
+    $('#e7-th').textContent=fx(th,2);
+    $('#e7-conv').textContent=fx(Math.max(0,th)*LC(),2);
+    $('#e7-ref').textContent=fx(s.k1?s.Iin:0,2);
+    const tot=Math.max(s.k1?s.Iin:0,1e-9);
+    $('#e7-bg').style.width=clamp(sp.ig/tot*100,0,100)+'%';$('#e7-bs').style.width=clamp(sp.is/tot*100,0,100)+'%';
+    $('#e7-split').textContent=`Through G: ${fx(sp.ig,2)} mA (amber), through S: ${fx(sp.is,2)} mA (green)`;
+    const m=$('#e7-msg');let cls='msg',txt;
+    if(!Number.isFinite(sc)){cls='msg bad';txt='This range is too small. The galvanometer alone already reaches full scale.';}
+    else if(!s.k1)txt='Close K1 and slide the current.';
+    else if(s.Sused<=0){cls='msg bad';txt='With S = 0 the shunt is a short circuit and no current goes through G. Enter S or tap "Use calculated S".';}
+    else if(th>2*s.n){cls='msg bad';txt='Far too much current through G. A real galvanometer could burn.';}
+    else if(th>s.n){cls='msg bad';txt='Off scale. The current is above the range, or S is too large.';}
+    else if(Math.abs(s.Sused-sc)/Math.max(sc,1e-6)>0.01)txt='Your S is not the calculated value, so the converted reading will be wrong.';
+    else txt='S matches the calculation. Most current goes through the shunt and the readings should agree.';
+    m.className=cls;m.textContent=txt;
+  }
+  function renderTable(){
+    $('#e7-tb').innerHTML=s.rows.length?s.rows.map((r,i)=>`<tr><td>${i+1}</td><td>${fx(r.th,2)}</td><td>${fx(r.conv,2)}</td><td>${fx(r.ref,2)}</td><td>${fx(r.conv-r.ref,2)}</td></tr>`).join(''):'<tr><td colspan="5" class="empty">No readings yet. Close K1, set a current and tap Record reading.</td></tr>';
+    const r=$('#e7-res');
+    if(s.rows.length<3){r.textContent='Take at least 3 readings to see the result.';return;}
+    const me=mean(s.rows.map(x=>Math.abs(x.conv-x.ref)));
+    r.innerHTML=`Mean error = ${fx(me,2)} mA (${fx(me/s.I*100,1)}% of the range).<br>${me/s.I<0.02?`The galvanometer works as an ammeter of range 0 to ${fx(s.I,1)} mA with S = ${fx(s.Sused,2)} Ω in parallel.`:'The error is large. Check the shunt value S.'}`;
+  }
+  ['e7G','e7k','e7I'].forEach(id=>$('#'+id).addEventListener('input',()=>{
+    const G=parseFloat($('#e7G').value),k=parseFloat($('#e7k').value),I=parseFloat($('#e7I').value);
+    if(G>0)s.G=G;if(k>0)s.kuA=k;if(I>0)s.I=I;
+    s.rows=[];sl.set(Math.min(s.Iin,s.I*1.2),true);s.Iin=sl.get();renderTable();update();
+  }));
+  $('#e7S').addEventListener('input',()=>{const v=parseFloat($('#e7S').value);s.Sused=v>=0?v:0;update();});
+  $('#e7-use').addEventListener('click',()=>{if(!(s.I>Ig()))return toast('Choose a bigger range first.','bad');s.Sused=+Scalc().toFixed(3);$('#e7S').value=s.Sused;update();});
+  $('#e7-b').addEventListener('click',()=>{s.k1=!s.k1;update();});
+  onKey('c7-k',()=>{s.k1=!s.k1;update();});
+  $('#e7-add').addEventListener('click',()=>{
+    if(!s.k1)return toast('Close K1 first.','bad');
+    if(s.Iin<=0)return toast('Set a current above 0.','bad');
+    const th=theta();
+    if(th>s.n)return toast('The needle is off scale. Lower the current.','bad');
+    const ref=s.Iin*(1+(noisy()?0.005*jit(s.Iin*9.1):0));
+    s.rows.push({th,conv:th*LC(),ref});renderTable();toast('Reading saved.','good');
+  });
+  $('#e7-undo').addEventListener('click',()=>{s.rows.pop();renderTable();});
+  $('#e7-clear').addEventListener('click',()=>{s.rows=[];renderTable();});
+  $('#noise').addEventListener('change',update);
+  renderTable();update();
+})();
+
+/* =====================================================================
+   EXPERIMENT 8
+   ===================================================================== */
+(function(){
+  /* part switch */
+  const pa=$('#e8-pa'),pb=$('#e8-pb');
+  function part(a){
+    pa.setAttribute('aria-pressed',a?'true':'false');pb.setAttribute('aria-pressed',a?'false':'true');
+    $('#e8-partA').hidden=!a;$('#e8-partB').hidden=a;
+  }
+  pa.addEventListener('click',()=>part(true));pb.addEventListener('click',()=>part(false));
+
+  /* ---------- Part A ---------- */
+  const A={type:'R',cfg:'series',n:2,vals:{R:[100,220,330],C:[10,22,47]},rows:[],Vs:6};
+  $('#sim8a').innerHTML=`
+  <div class="bench">
+    <div class="chips" role="group" aria-label="Component type">
+      <button class="chip" type="button" data-t="R" aria-pressed="true">Resistors</button>
+      <button class="chip" type="button" data-t="C" aria-pressed="false">Capacitors</button>
+    </div>
+    <div class="chips" role="group" aria-label="Connection">
+      <button class="chip" type="button" data-c="series" aria-pressed="true">Series</button>
+      <button class="chip" type="button" data-c="parallel" aria-pressed="false">Parallel</button>
+    </div>
+    <div class="chips" role="group" aria-label="How many">
+      <button class="chip" type="button" data-n="2" aria-pressed="true">2 parts</button>
+      <button class="chip" type="button" data-n="3" aria-pressed="false">3 parts</button>
+    </div>
+    <div class="field-grid" id="e8-vals"></div>
+    <svg class="circuit" id="c8a" viewBox="0 0 360 215" role="img" aria-label="Series or parallel circuit"></svg>
+    <div class="ros" id="e8-ros"></div>
+    <div id="e8-detail" class="msg"></div>
+    <div class="field-grid">
+      <div class="field"><label for="e8-ans" id="e8-ansl">Check my answer: total (Ω)</label><input class="num-in" style="width:100%" id="e8-ans" type="number" step="any" placeholder="your answer"></div>
+      <div class="field" style="align-self:end"><button class="btn" id="e8-chk" type="button" style="width:100%">Check</button></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="e8-rec" type="button">Record reading</button>
+      <button class="btn ghost" id="e8-undo" type="button">Undo last</button>
+      <button class="btn ghost" id="e8-clear" type="button">Clear table</button>
+    </div>
+  </div>
+  <h4>Observation table</h4>
+  <div class="tw"><table><thead><tr><th>No.</th><th>Part</th><th>Connection</th><th>Values</th><th>Calculated</th><th>Meter reading</th><th>Difference</th></tr></thead><tbody id="e8-tb"></tbody></table></div>`;
+
+  const unit=()=>A.type==='R'?'Ω':'µF';
+  const vals=()=>A.vals[A.type].slice(0,A.n);
+  function eq(){
+    const v=vals(),sum=v.reduce((a,b)=>a+b,0),inv=1/v.reduce((a,b)=>a+1/b,0);
+    const add=(A.type==='R'&&A.cfg==='series')||(A.type==='C'&&A.cfg==='parallel');
+    return add?sum:inv;
+  }
+  function fmtV(x){return +x.toFixed(3);}
+  function drawNet(){
+    const v=vals(),n=v.length,isR=A.type==='R',u=unit();
+    const sym=isR?zigH:capH;
+    let w='',c='',l='';
+    if(A.cfg==='series'){
+      w=`<path class="w" d="M30 108 V40 H330 V180 H30 V124"/>`;
+      v.forEach((val,i)=>{
+        const x=75+(i+0.5)*(250/n);
+        c+=`<g transform="translate(${x} 40)"><rect class="mask" x="-20" y="-14" width="40" height="28"/><path class="c" d="${sym}"/></g>`;
+        l+=`<text class="t" x="${x}" y="20" text-anchor="middle">${isR?'R':'C'}${i+1}</text><text class="ts" x="${x}" y="64" text-anchor="middle">${fmtV(val)} ${u}</text>`;
+      });
+    }else{
+      const xs=v.map((_,i)=>90+(i+0.5)*(210/n)),xr=xs[n-1];
+      w=`<path class="w" d="M30 108 V50 H${xr} M30 124 V170 H${xr} ${xs.map(x=>`M${x} 50 V170`).join(' ')}"/>`;
+      v.forEach((val,i)=>{
+        const x=xs[i];
+        c+=`<g transform="translate(${x} 110) rotate(90)"><rect class="mask" x="-20" y="-14" width="40" height="28"/><path class="c" d="${sym}"/></g><circle class="dot" cx="${x}" cy="50" r="3.5"/><circle class="dot" cx="${x}" cy="170" r="3.5"/>`;
+        l+=`<text class="t" x="${x+18}" y="106">${isR?'R':'C'}${i+1}</text><text class="ts" x="${x+18}" y="120">${fmtV(val)} ${u}</text>`;
+      });
+    }
+    $('#c8a').innerHTML=`<g class="live">${w}</g>${battery(30,108,124)}<text class="t" x="46" y="140">${A.Vs} V</text>${c}${l}`;
+  }
+  function renderCtl(){
+    const u=unit(),p=A.type==='R'?'R':'C';
+    $('#e8-vals').innerHTML=vals().map((v,i)=>`<div class="field"><label for="e8v${i}">${p}${i+1} (${u})</label><input class="num-in" style="width:100%" id="e8v${i}" type="number" min="0.1" step="any" value="${v}"></div>`).join('');
+    vals().forEach((_,i)=>$('#e8v'+i).addEventListener('input',()=>{const x=parseFloat($('#e8v'+i).value);if(x>0){A.vals[A.type][i]=x;calc();}}));
+    $('#e8-ansl').textContent=`Check my answer: total (${u})`;
+    $$('#sim8a [data-t]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===A.type?'true':'false'));
+    $$('#sim8a [data-c]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===A.cfg?'true':'false'));
+    $$('#sim8a [data-n]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.n===A.n?'true':'false'));
+    calc();
+  }
+  function meter(){const e=eq();return noisy()?e*(1+0.01*jit(e*3.17+A.n)):e;}
+  function calc(){
+    const e=eq(),v=vals(),isR=A.type==='R',ser=A.cfg==='series',u=unit(),V=A.Vs;
+    drawNet();
+    let ros,det;
+    if(isR){
+      const I=V/e;
+      ros=`<div class="ro"><b>${fx(e,2)}</b><small>total R (Ω)</small></div><div class="ro"><b>${fx(I*1000,1)}</b><small>total current (mA)</small></div><div class="ro"><b>${fx(meter(),2)}</b><small>meter reading (Ω)</small></div>`;
+      det=ser?'Same current everywhere. Voltage drops: '+v.map((r,i)=>`R${i+1} = ${fx(I*r,2)} V`).join(', ')+'.'
+              :'Same voltage on every branch. Branch currents: '+v.map((r,i)=>`R${i+1} = ${fx(V/r*1000,1)} mA`).join(', ')+'.';
+    }else{
+      const Q=e*V;
+      ros=`<div class="ro"><b>${fx(e,2)}</b><small>total C (µF)</small></div><div class="ro"><b>${fx(Q,1)}</b><small>total charge (µC)</small></div><div class="ro"><b>${fx(meter(),2)}</b><small>meter reading (µF)</small></div>`;
+      det=ser?'Same charge on every capacitor. Voltages: '+v.map((c,i)=>`C${i+1} = ${fx(Q/c,2)} V`).join(', ')+'.'
+              :'Same voltage on every capacitor. Charges: '+v.map((c,i)=>`C${i+1} = ${fx(c*V,1)} µC`).join(', ')+'.';
+    }
+    $('#e8-ros').innerHTML=ros;
+    $('#e8-detail').className='msg';
+    $('#e8-detail').textContent=`With a ${V} V source. ${det}`;
+  }
+  $$('#sim8a [data-t]').forEach(b=>b.addEventListener('click',()=>{A.type=b.dataset.t;renderCtl();}));
+  $$('#sim8a [data-c]').forEach(b=>b.addEventListener('click',()=>{A.cfg=b.dataset.c;renderCtl();}));
+  $$('#sim8a [data-n]').forEach(b=>b.addEventListener('click',()=>{A.n=+b.dataset.n;renderCtl();}));
+  $('#e8-chk').addEventListener('click',()=>{
+    const a=parseFloat($('#e8-ans').value);
+    if(!Number.isFinite(a))return toast('Type your answer first.','bad');
+    const e=eq();
+    if(Math.abs(a-e)/e<=0.01)toast(`Correct! Total = ${fx(e,2)} ${unit()}.`,'good');
+    else toast(A.cfg==='series'===(A.type==='R')?'Not quite. For this one the values simply add up. Check your sum.':'Not quite. For this one use 1/total = 1/a + 1/b ... and then flip the answer.','bad');
+  });
+  $('#e8-rec').addEventListener('click',()=>{
+    const e=eq(),m=meter();
+    A.rows.push({type:A.type,cfg:A.cfg,vals:vals().slice(),e,m,u:unit()});renderRows();toast('Reading saved.','good');
+  });
+  $('#e8-undo').addEventListener('click',()=>{A.rows.pop();renderRows();});
+  $('#e8-clear').addEventListener('click',()=>{A.rows=[];renderRows();});
+  function renderRows(){
+    $('#e8-tb').innerHTML=A.rows.length?A.rows.map((r,i)=>`<tr><td>${i+1}</td><td>${r.type==='R'?'Resistors':'Capacitors'}</td><td>${r.cfg}</td><td>${r.vals.map(fmtV).join(', ')} ${r.u}</td><td>${fx(r.e,2)} ${r.u}</td><td>${fx(r.m,2)} ${r.u}</td><td>${fx((r.m-r.e)/r.e*100,1)}%</td></tr>`).join(''):'<tr><td colspan="7" class="empty">No readings yet. Choose a circuit and tap Record reading.</td></tr>';
+  }
+  $('#noise').addEventListener('change',calc);
+  renderCtl();renderRows();
+
+  /* ---------- Part B: logic gates ---------- */
+  const GATES={
+    AND:{f:(a,b)=>a&b,ic:'7408',pins:'Inputs pins 1 and 2, output pin 3',two:true},
+    OR:{f:(a,b)=>a|b,ic:'7432',pins:'Inputs pins 1 and 2, output pin 3',two:true},
+    NOT:{f:a=>1-a,ic:'7404',pins:'Input pin 1, output pin 2',two:false},
+    NAND:{f:(a,b)=>1-(a&b),ic:'7400',pins:'Inputs pins 1 and 2, output pin 3',two:true},
+    NOR:{f:(a,b)=>1-(a|b),ic:'7402',pins:'Inputs pins 2 and 3, output pin 1',two:true},
+    XOR:{f:(a,b)=>a^b,ic:'7486',pins:'Inputs pins 1 and 2, output pin 3',two:true},
+    XNOR:{f:(a,b)=>1-(a^b),ic:'74266',pins:'Inputs pins 1 and 2, output pin 3',two:true}
+  };
+  const names=Object.keys(GATES);
+  const B={g:'AND',a:0,b:0,seen:new Set(),mystery:false,secret:null};
+  $('#sim8b').innerHTML=`
+  <div class="bench">
+    <div class="chips" id="e8-gsel" role="group" aria-label="Choose a gate">
+      ${names.map(n=>`<button class="chip" type="button" data-g="${n}" aria-pressed="false">${n}</button>`).join('')}
+      <button class="chip" type="button" data-g="MYSTERY" aria-pressed="false">Mystery gate</button>
+    </div>
+    <svg class="circuit" id="c8b" viewBox="0 0 360 190" role="img" aria-label="Logic gate circuit"></svg>
+    <div class="row keys">
+      <button class="btn key" id="e8-ba" type="button" aria-pressed="false">A = 0</button>
+      <button class="btn key" id="e8-bb" type="button" aria-pressed="false">B = 0</button>
+    </div>
+    <div class="ros">
+      <div class="ro"><b id="e8-out">0</b><small>output Y (LED)</small></div>
+      <div class="ro"><b id="e8-ic">–</b><small>real IC</small></div>
+    </div>
+    <div class="msg" id="e8-pin"></div>
+    <div id="e8-guess" class="chips" hidden></div>
+    <div class="row"><button class="btn ghost" id="e8-reset" type="button">Reset table</button></div>
+  </div>
+  <h4 id="e8-tt-title">Truth table</h4>
+  <div class="tw"><table><thead id="e8-tth"></thead><tbody id="e8-ttb"></tbody></table></div>
+  <div class="result" id="e8-vres" style="margin-top:12px">Test every row to verify the gate.</div>`;
+
+  const cur=()=>B.mystery?B.secret:B.g;
+  function gateShape(g){
+    // local coords 0..50 box. returns {body, outx, inEnd}
+    switch(g){
+      case 'AND':return {body:'M0 0 H24 A25 25 0 0 1 24 50 H0 Z',outx:49,inEnd:0,extra:''};
+      case 'NAND':return {body:'M0 0 H24 A25 25 0 0 1 24 50 H0 Z',outx:49,inEnd:0,bub:true};
+      case 'OR':return {body:'M0 0 C14 0 36 6 50 25 C36 44 14 50 0 50 C9 36 9 14 0 0 Z',outx:50,inEnd:4};
+      case 'NOR':return {body:'M0 0 C14 0 36 6 50 25 C36 44 14 50 0 50 C9 36 9 14 0 0 Z',outx:50,inEnd:4,bub:true};
+      case 'XOR':return {body:'M0 0 C14 0 36 6 50 25 C36 44 14 50 0 50 C9 36 9 14 0 0 Z',outx:50,inEnd:-4,x:true};
+      case 'XNOR':return {body:'M0 0 C14 0 36 6 50 25 C36 44 14 50 0 50 C9 36 9 14 0 0 Z',outx:50,inEnd:-4,x:true,bub:true};
+      default:return {body:'M0 0 L40 25 L0 50 Z',outx:40,inEnd:0,bub:true};
+    }
+  }
+  function drawGate(){
+    const g=cur(),sh=gateShape(g),two=GATES[g].two,y=GATES[g].f(B.a,B.b);
+    const sc=1.4,gx=150,gy=50;
+    const out=sh.outx+(sh.bub?10:0);
+    const ox=gx+out*sc,oy=gy+25*sc;
+    const ya=two?gy+12*sc:oy,yb=gy+38*sc;
+    const ex=gx+sh.inEnd*sc;
+    const hi=v=>v?'live':'';
+    let s='';
+    s+=`<g class="${hi(B.a)}"><path class="w" d="M62 ${ya} H${ex}"/></g>`;
+    if(two)s+=`<g class="${hi(B.b)}"><path class="w" d="M62 ${yb} H${ex}"/></g>`;
+    s+=`<g class="${hi(y)}"><path class="w" d="M${ox} ${oy} H250"/></g>`;
+    s+=`<g class="${hi(y)}"><path class="w" d="M282 ${oy} H304"/></g>`;
+    s+=`<g transform="translate(${gx} ${gy}) scale(${sc})"><path class="c" d="${sh.body}" style="fill:#2C4A5E;stroke-width:${2.5/sc}"/>${sh.x?`<path class="c" d="M-8 0 C1 14 1 36 -8 50" style="stroke-width:${2.5/sc}"/>`:''}${sh.bub?`<circle class="c" cx="${sh.outx+5}" cy="25" r="5" style="fill:var(--bench2);stroke-width:${2.5/sc}"/>`:''}</g>`;
+    s+=`<text class="tb" x="${gx+22*sc}" y="${gy+25*sc+5}" text-anchor="middle" style="font-size:11px;opacity:.9">${B.mystery?'?':''}</text>`;
+    s+=`<g class="inbox ${B.a?'hi':''}" id="c8-ia"><rect x="12" y="${ya-15}" width="50" height="30" rx="8"/><text x="37" y="${ya+5}" text-anchor="middle">A = ${B.a}</text></g>`;
+    if(two)s+=`<g class="inbox ${B.b?'hi':''}" id="c8-ib"><rect x="12" y="${yb-15}" width="50" height="30" rx="8"/><text x="37" y="${yb+5}" text-anchor="middle">B = ${B.b}</text></g>`;
+    s+=`<rect class="c" x="250" y="${oy-8}" width="32" height="16" rx="3"/><text class="ts" x="266" y="${oy-14}" text-anchor="middle">330 Ω</text>`;
+    s+=`<circle class="glow ${y?'on':''}" cx="322" cy="${oy}" r="15"/><path class="c" d="M316 ${oy-7} L328 ${oy} L316 ${oy+7} Z M329 ${oy-7} V${oy+7}" style="stroke-width:2"/><text class="ts" x="322" y="${oy+34}" text-anchor="middle">LED</text>`;
+    s+=`<text class="ts" x="${gx+25*sc}" y="${gy+54*sc+8}" text-anchor="middle">${B.mystery?'hidden gate':g+' gate'}</text>`;
+    $('#c8b').innerHTML=s;
+    $('#e8-out').textContent=y;
+    $('#e8-ba').setAttribute('aria-pressed',B.a?'true':'false');$('#e8-ba').textContent='A = '+B.a;
+    const bb=$('#e8-bb');bb.hidden=!two;bb.setAttribute('aria-pressed',B.b?'true':'false');bb.textContent='B = '+B.b;
+    const ia=$('#c8-ia');ia.addEventListener('click',()=>{B.a=1-B.a;step();});
+    if(two)$('#c8-ib').addEventListener('click',()=>{B.b=1-B.b;step();});
+  }
+  function rowsFor(g){return GATES[g].two?[[0,0],[0,1],[1,0],[1,1]]:[[0],[1]];}
+  function drawTable(){
+    const g=cur(),two=GATES[g].two;
+    $('#e8-tt-title').textContent=B.mystery?'Truth table (fill it in by testing)':`Truth table of ${g}`;
+    $('#e8-tth').innerHTML=`<tr>${two?'<th>A</th><th>B</th>':'<th>A</th>'}<th>Y</th><th>Tested</th></tr>`;
+    $('#e8-ttb').innerHTML=rowsFor(g).map(r=>{
+      const key=r.join(''),isNow=(two?(r[0]===B.a&&r[1]===B.b):r[0]===B.a),seen=B.seen.has(key);
+      const y=GATES[g].f(...r);
+      return `<tr class="${isNow?'now':''}"><td>${r[0]}</td>${two?`<td>${r[1]}</td>`:''}<td>${seen||!B.mystery?y:'?'}</td><td>${seen?'✓':''}</td></tr>`;
+    }).join('');
+    const total=rowsFor(g).length,done=B.seen.size;
+    $('#e8-vres').innerHTML=done>=total?`All ${total} rows tested. The ${B.mystery?'gate you tested':g} truth table is verified.`:`Tested ${done} of ${total} rows. Toggle the inputs to visit every row.`;
+  }
+  function step(){
+    const g=cur(),two=GATES[g].two;
+    B.seen.add(two?`${B.a}${B.b}`:`${B.a}`);
+    drawGate();drawTable();pinInfo();
+  }
+  function pinInfo(){
+    const g=cur();
+    if(B.mystery){$('#e8-ic').textContent='?';$('#e8-pin').textContent='Test all rows, then guess which gate it is.';return;}
+    $('#e8-ic').textContent=GATES[g].ic;
+    $('#e8-pin').textContent=`IC ${GATES[g].ic}: ${GATES[g].pins}. Pin 14 is +5 V and pin 7 is ground.`;
+  }
+  function pick(v){
+    B.seen=new Set();B.a=0;B.b=0;
+    if(v==='MYSTERY'){B.mystery=true;B.secret=names[Math.floor(Math.random()*names.length)];}
+    else{B.mystery=false;B.g=v;}
+    $$('#e8-gsel .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.g===v?'true':'false'));
+    const gs=$('#e8-guess');
+    if(B.mystery){gs.hidden=false;gs.innerHTML='<span style="width:100%;font-weight:700">Which gate is it?</span>'+names.map(n=>`<button class="chip" type="button" data-guess="${n}" aria-pressed="false">${n}</button>`).join('');
+      $$('[data-guess]',gs).forEach(b=>b.addEventListener('click',()=>{
+        if(b.dataset.guess===B.secret){toast(`Yes! It was ${B.secret}.`,'good');B.mystery=false;B.g=B.secret;gs.hidden=true;$$('#e8-gsel .chip').forEach(c=>c.setAttribute('aria-pressed',c.dataset.g===B.g?'true':'false'));drawGate();drawTable();pinInfo();}
+        else toast('Not that one. Compare your table with each gate.','bad');
+      }));}
+    else gs.hidden=true;
+    step();B.seen=new Set([GATES[cur()].two?'00':'0']);drawGate();drawTable();pinInfo();
+  }
+  $$('#e8-gsel .chip').forEach(c=>c.addEventListener('click',()=>pick(c.dataset.g)));
+  $('#e8-ba').addEventListener('click',()=>{B.a=1-B.a;step();});
+  $('#e8-bb').addEventListener('click',()=>{B.b=1-B.b;step();});
+  $('#e8-reset').addEventListener('click',()=>{B.seen=new Set([GATES[cur()].two?`${B.a}${B.b}`:`${B.a}`]);drawTable();});
+  pick('AND');
+})();
+
+/* ---------- print helpers ---------- */
+$$('[id^="sim"]').forEach(el=>{const s=el.closest('.sec');if(s)s.classList.add('simsec');});
+$$('.exp').forEach(a=>{
+  const f=$('.sec',a);if(f)f.classList.add('aimsec');
+  const d=document.createElement('div');d.className='devby-print';
+  d.textContent='Developed by Ms. Naveera Nazneen, Physics department';a.appendChild(d);
+});
+
+/* ---------- start ---------- */
+const start=(location.hash||'#exp4').slice(1);
+show(['exp4','exp5','exp6','exp7','exp8'].includes(start)?start:'exp4');
+})();
+</script>
+</body>
+</html>
